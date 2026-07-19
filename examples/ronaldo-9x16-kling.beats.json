@@ -1,0 +1,82 @@
+{
+  "project": "ronaldo",
+  "topic": "Cristiano Ronaldo — a career in five moments (collage tribute)",
+  "language": "en",
+  "aspect": "9:16",
+  "era": "modern",
+  "style": "collage",
+  "video_model": "kwaivgi/kling-video-o3-pro/image-to-video",
+  "watermark": "Atlas Cloud · 100% AUTOMATED",
+  "voice": {
+    "gender": "male",
+    "tone": "epic cinematic sports documentary narrator",
+    "voice_id": "leo",
+    "language": "en",
+    "speed": 1.0
+  },
+  "music": "epic emotional cinematic orchestral, soaring strings and triumphant drums, nostalgic then triumphant, building to a climax, no vocals",
+  "beats": [
+    {
+      "id": 1,
+      "narration": "In 2004, a boy of nineteen wept before a nation. The dream was over. The legend had not yet begun.",
+      "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/keyframes/kf_1.png",
+      "dur": 5,
+      "motion": "one slow push-in on the crying young footballer; aged newspaper edges and halftone dots drift softly; somber and still",
+      "keyframe_url": "https://atlas-img.oss-accelerate-overseas.aliyuncs.com/images/ad8f99b9-20c7-4aac-aefa-242c2c39e5b2.png",
+      "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/clips/clip_1.mp4",
+      "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/196de7b6-ea0a-4482-95c6-96b7f35e8f4b.mp4",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/narr_1.mp3",
+      "narration_dur": 7.73
+    },
+    {
+      "id": 2,
+      "narration": "By 2008, he ruled the continent — his first Ballon d'Or, and the whole world at his feet.",
+      "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/keyframes/kf_2.png",
+      "dur": 5,
+      "motion": "one slow push-in on the roaring player; the golden trophy gleams; halftone dots pulse gently",
+      "keyframe_url": "https://atlas-img.oss-accelerate-overseas.aliyuncs.com/images/b792a763-16ac-4b8e-8b9a-f31139564ae2.png",
+      "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/clips/clip_2.mp4",
+      "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/0bb9e3c9-36ba-413c-92d8-1998d0caa569.mp4",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/narr_2.mp3",
+      "narration_dur": 6.5
+    },
+    {
+      "id": 3,
+      "narration": "In Madrid he became immortal — Champions League after Champions League. La Duodécima.",
+      "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/keyframes/kf_3.png",
+      "dur": 5,
+      "motion": "one slow rise from the player's outstretched arms up to the stacked trophies; paper cut-outs drift lightly",
+      "keyframe_url": "https://atlas-img.oss-accelerate-overseas.aliyuncs.com/images/dfb61cc7-8e35-4b7d-8657-b3b75097ff59.png",
+      "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/clips/clip_3.mp4",
+      "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/39397378-03d6-48a4-832c-bdcb5cf49689.mp4",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/narr_3.mp3",
+      "narration_dur": 6.4
+    },
+    {
+      "id": 4,
+      "narration": "Then the impossible — an overhead strike that turned a rival stadium into applause.",
+      "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/keyframes/kf_4.png",
+      "dur": 5,
+      "motion": "one slow zoom into the bicycle-kick silhouette as the orange starburst radiates; halftone dots pulse",
+      "keyframe_url": "https://atlas-img.oss-accelerate-overseas.aliyuncs.com/images/6cd2726d-a9e9-4942-bee1-9184c1286f7d.png",
+      "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/clips/clip_4.mp4",
+      "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/617ad105-48f7-4d52-b655-f21f60d8a140.mp4",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/narr_4.mp3",
+      "narration_dur": 5.67
+    },
+    {
+      "id": 5,
+      "narration": "And in 2016, he lifted a continent. Portugal, champions of Europe. Cristiano, forever.",
+      "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/keyframes/kf_5.png",
+      "dur": 5,
+      "motion": "one slow push-in as the player lifts the trophy; gold confetti drifts down; red-and-green ribbons flutter softly",
+      "keyframe_url": "https://atlas-img.oss-accelerate-overseas.aliyuncs.com/images/25cf570c-7efb-46f3-a976-e1ae3a5201e5.png",
+      "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/clips/clip_5.mp4",
+      "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/6d11f3de-7f5a-4959-91fc-c5cae5dc99d1.mp4",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/narr_5.mp3",
+      "narration_dur": 6.77
+    }
+  ],
+  "bgm_path": "/Users/qiutian/Projects/skills/vox-director/out/ronaldo/audio/bgm.mp3",
+  "bgm_dur": 185.57
+}

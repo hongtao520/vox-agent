@@ -1,0 +1,79 @@
+{
+  "project": "money-15s",
+  "topic": "money is trust (15s teaser)",
+  "language": "en",
+  "aspect": "9:16",
+  "style": "collage",
+  "theme": "american-retro",
+  "arc": "hook_payoff",
+  "video_model": "google/gemini-omni-flash/image-to-video",
+  "voice": {
+    "voice_id": "leo",
+    "language": "en",
+    "speed": 1.0
+  },
+  "music": "short punchy cinematic build, driving percussion, resolves on a warm chord, instrumental",
+  "watermark": "Made with Atlas Cloud",
+  "beats": [
+    {
+      "id": 1,
+      "title_cn": "",
+      "title_en": "MONEY",
+      "bg": "warm gold amber",
+      "feel": "intriguing, grand",
+      "hook": "surprising_stat",
+      "narration": "For five thousand years, money kept changing shape.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "shot_size": "WIDE",
+          "camera_move": "push_in",
+          "scene": "a museum display of the evolution of money in a row: cowrie shells, a gold coin, a paper banknote, a credit card, a glowing bitcoin, labels beneath",
+          "element_motion": "each money object lifts and settles in turn down the row, halftone dots pulse, a couple of coins glint"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title_cn": "",
+      "title_en": "SHELLS TO CODE",
+      "bg": "cold teal",
+      "feel": "brisk, building",
+      "narration": "Shells, gold, paper, plastic, then pure code.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "shot_size": "MEDIUM",
+          "camera_move": "pan",
+          "scene": "the five forms of money as bold cut-outs in a left-to-right procession: shell, gold coin, banknote, credit card, glowing bitcoin",
+          "element_motion": "the whole row slides left-to-right, each form swaps into the next, the bitcoin at the end spins and glows"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title_cn": "",
+      "title_en": "IT'S TRUST",
+      "bg": "bold red",
+      "feel": "profound, resonant, still",
+      "narration": "But money was never the thing. It is the trust.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "shot_size": "CLOSE",
+          "camera_move": "static",
+          "scene": "a close cut-in of an open cupped hand holding a single coin, warm light, radiating paper rays",
+          "element_motion": "the coin settles, a soft glow pulses once, everything else still — minimal, the point lands"
+        }
+      ]
+    }
+  ],
+  "bgm_path": "/Users/qiutian/Projects/skills/vox-director/out/money-15s/audio/bgm.mp3",
+  "bgm_dur": 15.33
+}

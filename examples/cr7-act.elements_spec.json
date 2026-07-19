@@ -1,0 +1,96 @@
+{
+  "card": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/card2.png",
+  "elements": [
+    {
+      "name": "ronaldo",
+      "bbox": [
+        255,
+        85,
+        692,
+        835
+      ],
+      "mode": "cutout",
+      "erase": [[510, 455, 715, 810]],
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/ronaldo.png",
+      "size": [
+        437,
+        750
+      ]
+    },
+    {
+      "name": "trophy",
+      "bbox": [
+        515,
+        465,
+        712,
+        800
+      ],
+      "mode": "cutout",
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/trophy.png",
+      "size": [
+        197,
+        335
+      ]
+    },
+    {
+      "name": "crest",
+      "bbox": [
+        85,
+        92,
+        278,
+        246
+      ],
+      "mode": "cutout",
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/crest.png",
+      "size": [
+        193,
+        154
+      ]
+    },
+    {
+      "name": "seven",
+      "bbox": [
+        68,
+        250,
+        238,
+        568
+      ],
+      "mode": "crop",
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/seven.png",
+      "size": [
+        170,
+        318
+      ]
+    },
+    {
+      "name": "king",
+      "bbox": [
+        52,
+        585,
+        302,
+        788
+      ],
+      "mode": "crop",
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/king.png",
+      "size": [
+        250,
+        203
+      ]
+    },
+    {
+      "name": "y2008",
+      "bbox": [
+        468,
+        828,
+        726,
+        948
+      ],
+      "mode": "crop",
+      "file": "/Users/qiutian/Projects/skills/vox-director/out/cr7-act/elements/y2008.png",
+      "size": [
+        258,
+        120
+      ]
+    }
+  ]
+}

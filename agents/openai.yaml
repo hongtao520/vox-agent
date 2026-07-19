@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vox Director"
+  short_description: "用 Liblib 与 Fish 制作 VOX 拼贴解说视频"
+  default_prompt: "Use $vox-director to turn this topic into a finished Chinese VOX-style collage explainer video."

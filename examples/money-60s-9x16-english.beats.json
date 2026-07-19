@@ -1,0 +1,237 @@
+{
+  "project": "money-60s",
+  "topic": "A Brief History of Money",
+  "language": "en",
+  "aspect": "9:16",
+  "style": "collage",
+  "video_model": "google/gemini-omni-flash/image-to-video",
+  "voice": {
+    "gender": "male",
+    "tone": "warm authoritative documentary narrator",
+    "voice_id": "leo",
+    "language": "en",
+    "speed": 1.0
+  },
+  "music": "cinematic documentary score evolving from ancient organic hand percussion to a modern electronic pulse, driving yet reflective, instrumental, no vocals",
+  "watermark": "Made with Atlas Cloud",
+  "beats": [
+    {
+      "id": 1,
+      "title_cn": "",
+      "title_en": "BEFORE MONEY",
+      "bg": "earthy clay tan",
+      "feel": "ancient, humble, rough",
+      "narration": "For most of history, there was no money. You traded a goat for grain, and hoped the other person actually wanted a goat.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "two ancient traders facing off in a barter, a cut-out goat, sacks of grain, a scatter of cowrie shells, a scratched clay tablet, a torn arrow scrap between them",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat earthy clay tan paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): two ancient traders facing off in a barter, a cut-out goat, sacks of grain, a scatter of cowrie shells, a scratched clay tablet, a torn arrow scrap between them. Include a torn-paper banner with a big bold cut-out English headline 'BEFORE MONEY', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260710-24f931dd4d943e0088d44019aebf059a-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_1.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-b3ecfd2a9e7e94fe8acd5ec3b942fd15-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_1a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of two hands exchanging a bundle of grain for a small goat, scattered cowrie shells and a torn arrow scrap",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat earthy clay tan paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of two hands exchanging a bundle of grain for a small goat, scattered cowrie shells and a torn arrow scrap. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/05c17813-f6ae-440e-9fd8-698edf3506e3.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_1b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-d2e7619b66306d0cbc75a79692e6b73c-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_1b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_1.mp3",
+      "narration_dur": 7.44
+    },
+    {
+      "id": 2,
+      "title_cn": "",
+      "title_en": "FIRST MONEY",
+      "bg": "warm gold amber",
+      "feel": "dawn of value, gleaming, awe",
+      "narration": "So people found a shortcut. Shells, then metal. Around 600 BC, the kingdom of Lydia struck the very first coins.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a string of cowrie shells, a heap of gold, a big stamped ancient Lydian coin as the focal cut-out, an ancient hand reaching in, halftone sunburst rays",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat warm gold amber paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a string of cowrie shells, a heap of gold, a big stamped ancient Lydian coin as the focal cut-out, an ancient hand reaching in, halftone sunburst rays. Include a torn-paper banner with a big bold cut-out English headline 'FIRST MONEY', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/1f88d0ca-cabb-44e4-9255-a8c7fd562603.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_2.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-0b11e729562ffe50cb32ef82dd9d0c00-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_2a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of a single big stamped ancient Lydian coin held between fingertips, glinting gold nuggets around it",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat warm gold amber paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of a single big stamped ancient Lydian coin held between fingertips, glinting gold nuggets around it. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260710-1701645bc039673fa82e01c9729c3aa4-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_2b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-5a28e25adfb6d90f7bcb81393d865d43-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_2b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_2.mp3",
+      "narration_dur": 8.67
+    },
+    {
+      "id": 3,
+      "title_cn": "",
+      "title_en": "PAPER PROMISES",
+      "bg": "imperial deep-red",
+      "feel": "revolutionary, clever, bold",
+      "narration": "A thousand years ago, Song-dynasty China did something radical: money made of paper. A promise you could fold into your pocket.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a Song-dynasty jiaozi paper banknote as the hero cut-out, a Chinese scholar-official, a bright red ink seal stamp, a stack of round coins turning into a folded paper note",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat imperial deep-red paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a Song-dynasty jiaozi paper banknote as the hero cut-out, a Chinese scholar-official, a bright red ink seal stamp, a stack of round coins turning into a folded paper note. Include a torn-paper banner with a big bold cut-out English headline 'PAPER PROMISES', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/e1c5c824-417e-4ab4-a380-4e3a65dbb0c3.png",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_3.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-c17bf5794286c49216a1b6d42bf4229a-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_3a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of the Song jiaozi paper banknote with a bright red ink seal being pressed onto it, a hand folding the note",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat imperial deep-red paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of the Song jiaozi paper banknote with a bright red ink seal being pressed onto it, a hand folding the note. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/64ba6ffc-fefb-4bf0-a4cd-3c0bdff3a8f4.png",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_3b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-8a34c31bb5490c7a82f3904f858b77df-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_3b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_3.mp3",
+      "narration_dur": 8.75
+    },
+    {
+      "id": 4,
+      "title_cn": "",
+      "title_en": "BANKS & PLASTIC",
+      "bg": "cold steel blue",
+      "feel": "institutional, cold, modern",
+      "narration": "Paper needed guardians. Banks rose. Then plastic, and suddenly your money was just a number inside a machine.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a marble bank facade with columns and a heavy vault door, a vintage embossed credit card as a bold cut-out, a ledger book, a 1950s hand holding the card, halftone",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat cold steel blue paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a marble bank facade with columns and a heavy vault door, a vintage embossed credit card as a bold cut-out, a ledger book, a 1950s hand holding the card, halftone. Include a torn-paper banner with a big bold cut-out English headline 'BANKS & PLASTIC', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/a90d43f8-da15-461e-8ff3-2f21909fe1cf.png",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_4.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-49b94001c71b6acb6cb75cb9b2c2de5d-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_4a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of a 1950s hand pulling a vintage embossed credit card from a wallet, a bank ledger line and stacked coins",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat cold steel blue paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of a 1950s hand pulling a vintage embossed credit card from a wallet, a bank ledger line and stacked coins. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/9241c76a-41dc-43ea-8863-30037d491368.png",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_4b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-c79a304694a297c632a37a866e1a68eb-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_4b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_4.mp3",
+      "narration_dur": 7.34
+    },
+    {
+      "id": 5,
+      "title_cn": "",
+      "title_en": "MONEY GOES DIGITAL",
+      "bg": "dark charcoal with neon glow",
+      "feel": "electric, frontier, cold neon energy",
+      "narration": "Then money left the physical world entirely. Screens. Apps. And in 2009, Bitcoin. Cash with no bank, no border, no paper.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a glowing smartphone showing a payment, a bright bitcoin coin as the focal cut-out, a web of glowing network nodes, streams of ones and zeros, neon cyan and orange accents on a dark ground",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat dark charcoal with neon glow paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a glowing smartphone showing a payment, a bright bitcoin coin as the focal cut-out, a web of glowing network nodes, streams of ones and zeros, neon cyan and orange accents on a dark ground. Include a torn-paper banner with a big bold cut-out English headline 'MONEY GOES DIGITAL', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/58ddc086-75d0-437c-a464-7956925bf593.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_5.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-d04ce26f42b95f007725a5d954147265-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_5a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of a smartphone screen showing a digital payment beside a glowing bitcoin symbol, streams of binary and neon glow",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat dark charcoal with neon glow paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of a smartphone screen showing a digital payment beside a glowing bitcoin symbol, streams of binary and neon glow. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260710-a0cf695f1a3a3842def13f6d8231ce57-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_5b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-41a66e1093b4fced3b3a90b599633218-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_5b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_5.mp3",
+      "narration_dur": 10.55
+    },
+    {
+      "id": 6,
+      "title_cn": "",
+      "title_en": "WHAT IS MONEY?",
+      "bg": "bold gold on black",
+      "feel": "reflective, profound, resonant, cinematic",
+      "narration": "From shells to code, money never truly changed. It was always the same thing: a story we all agree to believe.",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a montage collage of a cowrie shell, a gold coin, a paper banknote, a credit card and a bitcoin arranged in a row, a pair of open cupped hands beneath them, bold radiating rays",
+          "motion": "one slow gentle push-in on the whole collage; layered paper elements drift with parallax; halftone pulses softly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat bold gold on black paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a montage collage of a cowrie shell, a gold coin, a paper banknote, a credit card and a bitcoin arranged in a row, a pair of open cupped hands beneath them, bold radiating rays. Include a torn-paper banner with a big bold cut-out English headline 'WHAT IS MONEY?', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/e7191fcd-d852-4fd2-a4ac-c6b8f35a19fd.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_6.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-42095ffbd00f44bee94ee4bba0ae5ea3-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_6a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of open cupped hands cradling a cowrie shell, a gold coin, a paper banknote and a bitcoin together, radiating rays",
+          "motion": "one slow push-in on the detail; paper cut-outs drift gently; halftone pulses",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat bold gold on black paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of open cupped hands cradling a cowrie shell, a gold coin, a paper banknote and a bitcoin together, radiating rays. No big headline banner in this shot (keep only a small seal); it is a cut-in detail of the same scene. Aspect ratio 9:16.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260710-11b67691afe353e6916b5409f748b7d4-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/keyframes/kf_6b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260710-fc6389e475178e27e2361488029e26bc-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/clips/clip_6b.mp4"
+        }
+      ],
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/narr_6.mp3",
+      "narration_dur": 7.86
+    }
+  ],
+  "bgm_path": "/Users/qiutian/Projects/skills/vox-director/out/money-60s/audio/bgm.mp3",
+  "bgm_dur": 215.5
+}

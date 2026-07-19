@@ -1,0 +1,125 @@
+{
+  "project": "tang-30s",
+  "topic": "The Tang Dynasty — golden age of Chinese civilization",
+  "language": "en",
+  "aspect": "16:9",
+  "era": "tang",
+  "style": "collage",
+  "voice": {
+    "gender": "male",
+    "tone": "calm authoritative documentary narrator",
+    "voice_id": "leo",
+    "language": "en",
+    "speed": 1.0
+  },
+  "music": "cinematic guzheng and erhu, majestic and warm, slowly building",
+  "beats": [
+    {
+      "id": 1,
+      "title_cn": "盛唐",
+      "title_en": "TANG GOLDEN AGE",
+      "bg": "imperial deep-red",
+      "narration": "In the seventh century, Tang China built Chang'an — the largest, richest city on Earth. The whole world came to its gates.",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/audio/narr_1.mp3",
+      "narration_dur": 8.62,
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "a Tang emperor on a golden throne in dragon robes with court ladies, tall palace halls and pagodas of Chang'an behind, cut-out ink-wash mountains and drifting clouds",
+          "motion": "slow commanding push-in toward the enthroned emperor; paper clouds drift; halftone dots pulse on the beat",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat imperial deep-red paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a Tang emperor on a golden throne in dragon robes with court ladies, tall palace halls and pagodas of Chang'an behind, cut-out ink-wash mountains and drifting clouds. Include a title cartouche with large red Chinese characters '盛唐' and a small clean English subtitle 'TANG GOLDEN AGE', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/8eafd46c-baae-470e-bf62-443d33ee9d0f.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_1a.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-1b4ed14cd3fdd61e83ae1a3e900ee440-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_1a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of foreign envoys from many nations bowing before the Tang throne, silk banners and gift boxes, sepia old-photograph cut-out figures",
+          "motion": "one slow steady push-in on the bowing envoys; torn-paper edges and washi tape flutter lightly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat imperial deep-red paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of foreign envoys from many nations bowing before the Tang throne, silk banners and gift boxes, sepia old-photograph cut-out figures. No big headline banner in this shot (keep only a small red seal); it is a cut-in detail of the same scene. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260708-21f9c125aeae5df109b3284b21de8864-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_1b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-072567748798ba138813874152cf1be0-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_1b.mp4"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title_cn": "丝绸之路",
+      "title_en": "THE SILK ROAD",
+      "bg": "warm ochre",
+      "narration": "Along the Silk Road, caravans carried silk and paper west, and returned with gold, new faiths, and ideas — Tang China, open to the world.",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/audio/narr_2.mp3",
+      "narration_dur": 10.16,
+      "shots": [
+        {
+          "id": "a",
+          "dur": 6,
+          "title": true,
+          "scene": "a long Bactrian camel caravan crossing layered paper desert dunes, cut-out ink-wash mountains, an oasis town scrap on the horizon",
+          "motion": "dynamic lateral parallax pan following the caravan; layered paper dunes and mountains slide at different depths; clouds drift",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat warm ochre paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a long Bactrian camel caravan crossing layered paper desert dunes, cut-out ink-wash mountains, an oasis town scrap on the horizon. Include a title cartouche with large red Chinese characters '丝绸之路' and a small clean English subtitle 'THE SILK ROAD', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260708-3d5f39f2b2afc0c105d9d5fade529834-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_2a.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-72d7130197b406eea41d1978f03146d4-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_2a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of Silk Road merchants trading a bundle of silk and a porcelain vase beside a camel, sepia old-photograph cut-out figures",
+          "motion": "one slow push-in on the merchants' exchanging hands; a yellow zigzag scrap flutters lightly",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat warm ochre paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of Silk Road merchants trading a bundle of silk and a porcelain vase beside a camel, sepia old-photograph cut-out figures. No big headline banner in this shot (keep only a small red seal); it is a cut-in detail of the same scene. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/2ce2e2af-33cc-49d3-9ed2-f9bfc2266eaa.png",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_2b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-6830bed0dad0981e2289cde91bceeb3b-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_2b.mp4"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title_cn": "诗的盛世",
+      "title_en": "AGE OF POETRY",
+      "bg": "deep indigo night-blue",
+      "narration": "It was the golden age of poetry — Li Bai and Du Fu, still sung today. For three centuries, the Tang burned brightest.",
+      "narration_audio": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/audio/narr_3.mp3",
+      "narration_dur": 8.96,
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": true,
+          "scene": "Tang poets gathered by a river raising wine cups under a large cut-out full moon, plum-blossom branches and hanging red lanterns",
+          "motion": "gentle rise revealing the poets and the full moon; paper lanterns sway; plum petals drift across layers",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat deep indigo night-blue paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): Tang poets gathered by a river raising wine cups under a large cut-out full moon, plum-blossom branches and hanging red lanterns. Include a title cartouche with large red Chinese characters '诗的盛世' and a small clean English subtitle 'AGE OF POETRY', plus a single red seal stamp. Keep the headline crisp and legible. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260708-0b387962055f5dbd7cb054bb95439fc5-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_3a.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-1c0305faa313dccf33407c1f3c28fcaf-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_3a.mp4"
+        },
+        {
+          "id": "b",
+          "dur": 5,
+          "title": false,
+          "scene": "a close cut-in of a single Tang poet raising a wine cup toward the glowing full moon, drifting plum petals and a flying paper crane",
+          "motion": "slow push toward the raised cup and the moon; a paper crane glides across; petals fall on the beat",
+          "keyframe_prompt": "Mixed-media hand-cut PAPER COLLAGE, editorial motion-graphic zine style. Clearly layered paper cut-outs with visible torn and scissor-cut edges, tape corners and soft real paper drop shadows, on a bold flat deep indigo night-blue paper background. Halftone print dots, newspaper-clipping scraps, paper-stencil shapes, aged paper texture, slight print misregistration. Scattered geometric collage accents (a small blue paper triangle, a red circle, a zigzag, halftone strips, bits of washi tape). Figures are PRINTED-texture cut-outs of real imagery (sepia old photographs / Chinese woodblock-print / mural), NOT CGI, NOT a 3D render — keep print grain and paper imperfections. High-contrast, punchy, tactile, hand-assembled. SCENE (as layered paper cut-outs): a close cut-in of a single Tang poet raising a wine cup toward the glowing full moon, drifting plum petals and a flying paper crane. No big headline banner in this shot (keep only a small red seal); it is a cut-in detail of the same scene. Aspect ratio 16:9.",
+          "keyframe_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/20260708-521f6e1973afc64647089cb4b80aeb56-0.jpg",
+          "keyframe_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/keyframes/kf_3b.jpg",
+          "clip_url": "https://atlas-media.oss-us-west-1.aliyuncs.com/videos/20260708-24e7369d795ccb4e20b6261a0625d806-0.mp4",
+          "clip_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/clips/clip_3b.mp4"
+        }
+      ]
+    }
+  ],
+  "bgm_path": "/Users/qiutian/Projects/skills/vox-director/out/tang-30s/audio/bgm.mp3",
+  "bgm_dur": 126.28
+}
