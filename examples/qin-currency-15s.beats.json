@@ -1,0 +1,112 @@
+{
+  "project": "qin-currency-15s",
+  "topic": "秦始皇统一货币",
+  "language": "zh-CN",
+  "aspect": "16:9",
+  "style": "collage",
+  "provider": "liblib",
+  "provider_config": {
+    "image_steps": 30,
+    "kling_model": "kling-v2-1",
+    "prompt_magic": 0,
+    "video_mode": "std",
+    "video_sound": "off",
+    "max_concurrency": 1
+  },
+  "theme": "chinese-ink",
+  "arc": "timeline",
+  "image_model": "liblib-image",
+  "video_model": "liblib-i2v",
+  "image_resolution": "1k",
+  "video_resolution": "720p",
+  "motion_style": "punchy",
+  "constraints": "strict",
+  "captions": true,
+  "caption_style": "white",
+  "watermark": "",
+  "mix": {
+    "music": 0.22,
+    "voice": 1.35
+  },
+  "voice": {
+    "provider": "fish",
+    "model": "s2.1-pro-free",
+    "reference_id": "6fc59d2b56cf402eb572934114c8d8aa",
+    "name": "历史故事·清晰",
+    "speed": 1.0,
+    "temperature": 0.65,
+    "top_p": 0.7,
+    "trim_silence": true
+  },
+  "narration_timing": {
+    "mode": "continuous",
+    "gap_s": 0.1,
+    "lead_in_s": 0.12
+  },
+  "bgm_path": "/absolute/path/to/your/15-second-bgm.wav",
+  "beats": [
+    {
+      "id": 1,
+      "title_cn": "",
+      "title_en": "",
+      "post_title": "七国异币",
+      "bg": "aged rice paper, charcoal black, oxidized bronze and one vermilion accent",
+      "feel": "urgent historical editorial collage, tactile and authoritative",
+      "hook": "pattern_interrupt",
+      "narration": "秦统一天下后，先要解决的，是七国的钱不能通用。",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": false,
+          "shot_size": "WIDE",
+          "camera_move": "pan",
+          "scene": "An archaeological editorial paper collage about incompatible money in an ancient marketplace: knife money, spade money, round coins and bronze shells lie on separate torn parchment islands; merchant hands, wooden carts and balance scales are photographic-paper cutouts; thin vermilion trade lines stop between islands; no geographic map, flags, labels, readable text or modern objects.",
+          "element_motion": "knife money and spade money slide in from opposite edges, round coins scatter and settle, torn scraps flutter, broken vermilion trade routes pulse once"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title_cn": "",
+      "title_en": "",
+      "post_title": "秦半两",
+      "bg": "deep lacquer black, warm parchment, aged bronze and imperial vermilion",
+      "feel": "decisive imperial reform shown as bold museum-editorial collage",
+      "hook": "turning_point",
+      "narration": "秦始皇废除旧币，推行圆形方孔的秦半两。",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": false,
+          "shot_size": "CLOSE",
+          "camera_move": "push_in",
+          "scene": "A heroic close-up museum-style paper collage of one weathered round Qin banliang bronze coin with a square central hole, centered on layered black lacquer paper, rice-paper fibers, torn vermilion seals and archival marks without numbers or words; no fake Chinese text or modern objects.",
+          "element_motion": "the coin pivots a few degrees like a rigid paper disc and settles, a thin vermilion ring draws around it, bronze dust flecks burst outward, side paper layers separate in subtle parallax"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title_cn": "",
+      "title_en": "",
+      "post_title": "统一尺度",
+      "bg": "warm rice paper, ink black, bronze gold and restrained vermilion routes",
+      "feel": "clear payoff, an empire connected by one shared standard",
+      "hook": "payoff",
+      "narration": "一枚钱走遍帝国，贸易、税赋和中央权力被同一尺度连接。",
+      "shots": [
+        {
+          "id": "a",
+          "dur": 5,
+          "title": false,
+          "shot_size": "EST_WIDE",
+          "camera_move": "pull_out",
+          "scene": "A wide Vox-style historical paper collage showing one shared monetary standard as an abstract parchment network; round square-hole bronze coins connect market stalls, grain-tax carts, seal bundles and road stations through clean vermilion routes; one larger coin anchors the center with ink-wash mountains and archival halftone texture; no geographic map, flags, readable text or modern objects.",
+          "element_motion": "vermilion routes grow from the central coin, small coins travel along three paths and settle at markets, grain bundles and seal papers pop into place, distant paper mountains drift in parallax"
+        }
+      ]
+    }
+  ]
+}
