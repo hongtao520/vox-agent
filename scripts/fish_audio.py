@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fish Audio TTS helpers for vox-director.
+"""Fish Audio TTS helpers for Vox Agent.
 
 Credentials are read only from FISH_API_KEY.  They are never written to
 beats.json or included in logs.

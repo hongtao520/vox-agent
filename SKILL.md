@@ -12,7 +12,7 @@ description: >
   collage ad", and "turn this topic/photo/product into a collage video".
 ---
 
-# Vox Director
+# Vox Agent
 
 Turn a one-line topic into a finished **Vox-style paper-collage video**: a bold, punchy,
 narrated explainer/ad where each beat is a torn-paper collage poster that comes alive, with

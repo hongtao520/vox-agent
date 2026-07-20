@@ -158,7 +158,7 @@ class LiblibClient:
                 + json.dumps(signed, ensure_ascii=False)[:800]
             )
 
-        boundary = "----vox-director-" + secrets.token_hex(12)
+        boundary = "----vox-agent-" + secrets.token_hex(12)
         chunks = []
         for name, value in required.items():
             chunks.extend([
@@ -194,7 +194,7 @@ class LiblibClient:
     @staticmethod
     def download(url, dest):
         Path(dest).parent.mkdir(parents=True, exist_ok=True)
-        req = Request(url, headers={"User-Agent": "vox-director-liblib/1.0"})
+        req = Request(url, headers={"User-Agent": "vox-agent-liblib/1.0"})
         with urlopen(req, timeout=120) as src, open(dest, "wb") as out:
             out.write(src.read())
         return dest

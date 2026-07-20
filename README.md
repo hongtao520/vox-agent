@@ -1,4 +1,4 @@
-# Vox Director
+# Vox Agent
 
 用 **Codex GPT Image 2 + Liblib 图片回退/Kling + Fish Audio + 本地 ffmpeg**，把一个主题制作成 VOX 风格的纸张拼贴解说视频。
 
