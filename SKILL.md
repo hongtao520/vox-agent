@@ -1,5 +1,5 @@
 ---
-name: vox-director
+name: vox-agent
 description: >
   Turn one topic into a finished Vox-style paper-collage explainer or ad: script, collage
   keyframes, motion, Fish Audio narration, captions, and local ffmpeg assembly. Codex GPT Image 2
