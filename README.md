@@ -27,7 +27,7 @@
 将仓库克隆到 Codex Skills 目录：
 
 ```bash
-git clone https://github.com/hongtao520/vox-director.git ~/.codex/skills/vox-director
+git clone https://github.com/hongtao520/vox-agent.git ~/.codex/skills/vox-director
 cd ~/.codex/skills/vox-director
 ```
 
