@@ -11,6 +11,7 @@ import json
 import os
 import sys
 
+from credentials import require_setup
 from provider import get_video_provider, run_jobs
 from styles import resolve_theme, resolve_video_aspect
 
@@ -100,6 +101,7 @@ def painterly_prompt(motion):
 
 
 def run(project_dir, only=None):
+    require_setup()
     bpath = os.path.join(project_dir, "beats.json")
     with open(bpath) as f:
         doc = json.load(f)

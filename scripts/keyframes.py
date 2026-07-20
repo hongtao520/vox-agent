@@ -3,8 +3,8 @@
 Keyframe stage: one styled keyframe per SHOT.
 
 Each beat holds one or more shots (different framings of the same narration
-beat) so the cut has variety. Codex mode writes a GPT Image 2 manifest; API
-mode writes local PNG files directly.
+beat) so the cut has variety. In Codex, auto mode writes a GPT Image 2
+manifest. Outside Codex, auto mode generates the entire batch through Liblib.
 
 Usage: python3 keyframes.py <project_dir>   (default: out/tang-30s)
 """
@@ -13,7 +13,10 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from credentials import require_setup
 from openai_image import OpenAIImageClient, normalize_aspect
+from provider import get_provider, run_jobs
+from runtime import resolve_image_provider
 from styles import compose_keyframe_prompt, compose_collage_prompt, resolve_theme
 
 IMAGE_MODEL = "gpt-image-2"
@@ -29,13 +32,15 @@ def shots_of(beat):
 
 
 def run(project_dir):
+    require_setup()
     bpath = os.path.join(project_dir, "beats.json")
     with open(bpath) as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
-    image_provider = str(doc.get("image_provider", "codex")).lower()
-    if image_provider not in {"codex", "openai"}:
-        raise SystemExit("image_provider must be 'codex' or 'openai'; Liblib keyframe generation has been removed")
+    requested_provider = str(doc.get("image_provider", "auto")).lower()
+    image_provider = resolve_image_provider(requested_provider)
+    doc["resolved_image_provider"] = image_provider
+    print(f"image route: requested={requested_provider}, resolved={image_provider}")
     img_model = doc.get("image_model", IMAGE_MODEL)
     if not str(img_model).startswith("gpt-image-2"):
         raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")
@@ -55,10 +60,14 @@ def run(project_dir):
     jobs, by_key = {}, {}
     for beat in doc["beats"]:
         for shot, key in shots_of(beat):
+            source_provider = (shot.get("keyframe_source") or {}).get("provider")
+            provider_mismatch = image_provider == "liblib" and source_provider != "liblib"
             existing = shot.get("keyframe_path")
             existing_path = (existing if not existing or os.path.isabs(existing)
                              else os.path.join(project_dir, existing))
-            if shot.get("keyframe_url") or (existing_path and os.path.exists(existing_path)):
+            if not provider_mismatch and (
+                shot.get("keyframe_url") or (existing_path and os.path.exists(existing_path))
+            ):
                 continue
             scene = shot["scene"]
             if style == "collage":
@@ -71,11 +80,14 @@ def run(project_dir):
                 prompt = compose_keyframe_prompt(era, scene, beat["title_cn"],
                                                  beat["title_en"], aspect)
             shot["keyframe_prompt"] = prompt
-            dest = os.path.join(kf_dir, f"kf_{key}.png")
+            suffix = "_liblib" if image_provider == "liblib" else ""
+            dest = os.path.join(kf_dir, f"kf_{key}{suffix}.png")
             if os.path.exists(dest):
                 normalize_aspect(dest, aspect)
                 shot["keyframe_path"] = os.path.abspath(dest)
-                shot["keyframe_source"] = {"provider": image_provider, "model": img_model}
+                source_model = (doc.get("image_fallback_model", "liblib-ultra")
+                                if image_provider == "liblib" else img_model)
+                shot["keyframe_source"] = {"provider": image_provider, "model": source_model}
                 print(f"[{key}] registered existing {dest}")
                 continue
             jobs[key] = (prompt, dest)
@@ -86,7 +98,11 @@ def run(project_dir):
         manifest = {
             "model": img_model,
             "aspect": aspect,
-            "instruction": "Use Codex image generation for every item and save the PNG at dest, then rerun keyframes.py to register it.",
+            "instruction": (
+                "Generate items with Codex chat image generation. If any item has a network/service "
+                "failure, stop the Codex batch and run keyframe_fallback.py <project> --all so every "
+                "keyframe uses Liblib. If all succeed, save each PNG at dest and rerun keyframes.py."
+            ),
             "items": [
                 {"key": key, "prompt": prompt, "dest": os.path.abspath(dest)}
                 for key, (prompt, dest) in jobs.items()
@@ -97,7 +113,7 @@ def run(project_dir):
         print(f"Codex GPT Image 2 manifest -> {manifest_path}")
         if jobs:
             print("Generate every manifest item with Codex image generation, save it at dest, then rerun this command.")
-    else:
+    elif image_provider == "openai":
         client = OpenAIImageClient(image_config)
         workers = max(1, int(image_config.get("max_concurrency", 2)))
         with ThreadPoolExecutor(max_workers=workers) as pool:
@@ -114,6 +130,49 @@ def run(project_dir):
                 shot["keyframe_source"] = {"provider": "openai", "model": img_model}
                 shot.pop("keyframe_url", None)
                 print(f"[{key}] GPT Image 2 saved {dest}")
+    else:
+        config = (doc.get("image_fallback_provider_config")
+                  or doc.get("video_provider_config") or {})
+        provider = get_provider("liblib", config)
+        model = doc.get("image_fallback_model", "liblib-ultra")
+        specs = {
+            key: (lambda p=prompt: provider.submit_image(
+                model, p, aspect_ratio=aspect,
+                steps=int(config.get("image_steps", 30)),
+            ))
+            for key, (prompt, _) in jobs.items()
+        }
+        outputs = run_jobs(
+            provider, specs,
+            poll_s=int(config.get("image_poll_s", 5)),
+            stall_s=int(config.get("image_stall_s", 240)),
+            max_retries=int(config.get("image_max_retries", 1)),
+            deadline_s=int(config.get("image_deadline_s", 900)),
+        ) if specs else {}
+        failed = []
+        for key, url in outputs.items():
+            if not url:
+                failed.append(key)
+                continue
+            destination = os.path.abspath(jobs[key][1])
+            provider.download(url, destination)
+            normalize_aspect(destination, aspect)
+            shot = by_key[key]
+            shot["keyframe_path"] = destination
+            shot["keyframe_url"] = url
+            shot["keyframe_source"] = {"provider": "liblib", "model": model,
+                                       "reason": "non_codex_batch"}
+            print(f"[{key}] Liblib keyframe saved {destination}")
+        if failed:
+            raise SystemExit("Liblib keyframe generation failed for: " + ", ".join(failed))
+
+    if not jobs or image_provider != "codex":
+        sources = {
+            (shot.get("keyframe_source") or {}).get("provider")
+            for beat in doc["beats"] for shot, _ in shots_of(beat)
+        }
+        if len(sources) == 1 and None not in sources:
+            doc["keyframe_batch_provider"] = next(iter(sources))
 
     with open(bpath, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

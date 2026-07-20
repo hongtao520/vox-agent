@@ -5,6 +5,7 @@ Liblib's documented workflow API generates images/video, not a stable TTS/BGM
 service. Fish Audio is the optional TTS provider; local narration remains valid.
 """
 import json, os, re, subprocess, sys, wave
+from credentials import require_setup
 from fish_audio import generate_project
 
 EDGE_TRIM = (
@@ -59,8 +60,17 @@ def trim_edges(source, target):
     ], check=True)
 
 def run(project_dir):
+    require_setup()
     bpath = os.path.join(project_dir, "beats.json")
     with open(bpath) as f: doc = json.load(f)
+    has_all_local_narration = all(
+        beat.get("narration_audio") and os.path.isfile(beat["narration_audio"])
+        for beat in doc["beats"]
+    )
+    if not has_all_local_narration and not (doc.get("voice") or {}).get("provider"):
+        doc["voice"] = {"provider": "fish"}
+        with open(bpath, "w") as target:
+            json.dump(doc, target, ensure_ascii=False, indent=2)
     if (doc.get("voice") or {}).get("provider") == "fish":
         generate_project(project_dir)
         with open(bpath) as f: doc = json.load(f)

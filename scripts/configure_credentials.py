@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Securely collect GPT Image 2, Liblib/Kling and Fish credentials."""
+"""Securely collect the three credentials required by Vox Agent."""
 from __future__ import annotations
 
 import argparse
@@ -8,49 +8,36 @@ import json
 import os
 from pathlib import Path
 
-from credentials import ENV_PATH, load_skill_env
-
-
-OPTIONAL = (
-    ("OPENAI_API_KEY", "OpenAI API Key (optional API-mode GPT Image 2)"),
-)
-
-REQUIRED = (
-    ("LIBLIB_ACCESS_KEY", "Liblib AccessKey"),
-    ("LIBLIB_SECRET_KEY", "Liblib SecretKey"),
-    ("FISH_API_KEY", "Fish Audio API Key"),
-)
+from credentials import ENV_PATH, REQUIRED_CREDENTIALS, load_skill_env
 
 
 def status() -> bool:
     load_skill_env()
-    missing = [name for name, _ in REQUIRED if not os.environ.get(name, "").strip()]
+    missing = [name for name, _, _ in REQUIRED_CREDENTIALS if not os.environ.get(name, "").strip()]
     print(f"credential file: {ENV_PATH}")
     if missing:
         print("missing: " + ", ".join(missing))
         return False
-    print("Codex GPT Image 2 keyframes: no API key required")
-    print("OpenAI API-mode keyframes: " + ("configured" if os.environ.get("OPENAI_API_KEY", "").strip() else "not configured (optional)"))
+    print("Codex chat image generation: no separate API key required")
     print("Liblib Kling image-to-video: configured")
     print("Fish Audio voice: configured")
     return True
 
 
 def configure() -> None:
+    print("Vox Agent needs exactly three credentials on first use.")
+    print("1) Liblib AccessKey + SecretKey: https://www.liblib.art/apis")
+    print("2) Fish Audio API Key: https://fish.audio/zh-CN/app/api-keys/")
     print("Credentials stay on this machine. Input is hidden and values are never printed.")
     values = {}
-    for name, label in REQUIRED:
+    for name, label, _ in REQUIRED_CREDENTIALS:
         value = getpass.getpass(f"{label}: ").strip()
         if not value:
             raise SystemExit(f"{label} is required; no file was written")
         values[name] = value
-    for name, label in OPTIONAL:
-        value = getpass.getpass(f"{label}; press Enter to skip: ").strip()
-        if value:
-            values[name] = value
     lines = [
         "# Local provider credentials. Never commit this file.",
-        "# OpenAI handles keyframes; Liblib/Kling handles image-to-video; Fish handles narration.",
+        "# Codex or Liblib handles keyframes; Liblib/Kling handles video; Fish handles narration.",
         *(f"{name}={json.dumps(value)}" for name, value in values.items()),
         "",
     ]

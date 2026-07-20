@@ -17,7 +17,10 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from credentials import require_setup
 from openai_image import OpenAIImageClient
+from provider import get_provider, run_jobs
+from runtime import resolve_image_provider
 from styles import compose_collage_prompt, STYLE_LIBRARY, THEME_PRESETS, resolve_theme
 
 IMAGE_MODEL = "gpt-image-2"
@@ -30,11 +33,12 @@ def first_shot(beat):
 
 
 def run(project_dir, styles=None, beat_index=0):
+    require_setup()
     styles = styles or DEFAULT_CANDIDATES
     with open(os.path.join(project_dir, "beats.json")) as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
-    image_provider = str(doc.get("image_provider", "codex")).lower()
+    image_provider = resolve_image_provider(str(doc.get("image_provider", "auto")))
     img_model = doc.get("image_model", IMAGE_MODEL)
     if not str(img_model).startswith("gpt-image-2"):
         raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")
@@ -83,7 +87,34 @@ def run(project_dir, styles=None, beat_index=0):
                 name = futures[future]
                 print(f"[{name}] saved {future.result()}")
     else:
-        raise SystemExit("image_provider must be 'codex' or 'openai'; Liblib keyframe generation has been removed")
+        config = (doc.get("image_fallback_provider_config")
+                  or doc.get("video_provider_config") or {})
+        provider = get_provider("liblib", config)
+        model = doc.get("image_fallback_model", "liblib-ultra")
+        jobs = {
+            name: (lambda p=prompt: provider.submit_image(
+                model, p, aspect_ratio=aspect,
+                steps=int(config.get("image_steps", 30)),
+            ))
+            for name, (prompt, _) in specs.items()
+        }
+        outputs = run_jobs(
+            provider, jobs,
+            poll_s=int(config.get("image_poll_s", 5)),
+            stall_s=int(config.get("image_stall_s", 240)),
+            max_retries=int(config.get("image_max_retries", 1)),
+            deadline_s=int(config.get("image_deadline_s", 900)),
+        )
+        failed = []
+        for name, url in outputs.items():
+            if not url:
+                failed.append(name)
+                continue
+            destination = os.path.abspath(specs[name][1])
+            provider.download(url, destination)
+            print(f"[{name}] Liblib candidate saved {destination}")
+        if failed:
+            raise SystemExit("Liblib style bake-off failed for: " + ", ".join(failed))
     print(f"\nsaved candidates to {out} — review, then set \"collage_style\" in beats.json.")
 
 

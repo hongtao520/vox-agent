@@ -34,7 +34,9 @@ import json
 import os
 import sys
 
+from credentials import require_setup
 from openai_image import normalize_aspect
+from runtime import resolve_image_provider
 from styles import compose_collage_prompt, resolve_theme
 
 EDIT_MODEL = "gpt-image-2"
@@ -92,14 +94,19 @@ def shots_of(beat):
 
 
 def run(project_dir):
+    require_setup()
     bpath = os.path.join(project_dir, "beats.json")
     with open(bpath) as f:
         doc = json.load(f)
     photo = doc["anchor_photo"]
     aspect = doc.get("aspect", "9:16")
-    image_provider = str(doc.get("image_provider", "codex")).lower()
+    image_provider = resolve_image_provider(str(doc.get("image_provider", "auto")))
     if image_provider != "codex":
-        raise SystemExit("C-roll keyframes currently require image_provider='codex' with GPT Image 2 editing")
+        raise SystemExit(
+            "C-roll anchor-preserving image editing currently requires a Codex environment. "
+            "Liblib text-to-image can handle B-roll batches but cannot preserve the supplied "
+            "anchor without a custom reference-image workflow."
+        )
     img_model = doc.get("image_model", EDIT_MODEL)
     if not str(img_model).startswith("gpt-image-2"):
         raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")

@@ -23,6 +23,8 @@ load_skill_env()
 
 API_BASE = "https://api.fish.audio"
 DEFAULT_MODEL = "s2.1-pro-free"
+DEFAULT_VOICE_NAME = "历史故事·清晰"
+DEFAULT_REFERENCE_ID = "6fc59d2b56cf402eb572934114c8d8aa"
 AUDITION_TEXT = "秦统一天下后，先要解决的，是七国的钱不能通用。"
 AUDITION_VOICES = [
     ("01_纪录片男声_沉稳", "7d4cc998f68c413ba5605d892d7acc87"),
@@ -121,11 +123,19 @@ def generate_project(project_dir: str) -> None:
     beats_path = project / "beats.json"
     doc = json.loads(beats_path.read_text(encoding="utf-8"))
     voice = doc.get("voice") or {}
+    if not voice:
+        voice = {
+            "provider": "fish", "model": DEFAULT_MODEL,
+            "name": DEFAULT_VOICE_NAME, "reference_id": DEFAULT_REFERENCE_ID,
+            "speed": 1.0, "temperature": 0.65, "top_p": 0.7,
+            "trim_silence": True,
+        }
+        doc["voice"] = voice
     if voice.get("provider") != "fish":
         raise SystemExit('Set voice.provider to "fish" in beats.json')
-    reference_id = voice.get("reference_id")
-    if not reference_id:
-        raise SystemExit("voice.reference_id is required for Fish Audio")
+    reference_id = voice.get("reference_id") or DEFAULT_REFERENCE_ID
+    voice.setdefault("reference_id", reference_id)
+    voice.setdefault("name", DEFAULT_VOICE_NAME)
     model = voice.get("model", DEFAULT_MODEL)
     speed = float(voice.get("speed", 1.0))
     temperature = float(voice.get("temperature", 0.65))

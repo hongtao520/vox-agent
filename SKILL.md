@@ -2,9 +2,9 @@
 name: vox-agent
 description: >
   Turn one topic into a finished Vox-style paper-collage explainer or ad: script, collage
-  keyframes, motion, Fish Audio narration, captions, and local ffmpeg assembly. Codex GPT Image 2
-  is attempted once per keyframe, Liblib image generation is the immediate network-failure fallback,
-  Liblib/Kling owns image-to-video, and Fish owns voice. Use whenever the user wants a Vox
+  keyframes, motion, Fish Audio narration, captions, and local ffmpeg assembly. In Codex, GPT Image 2
+  creates the whole keyframe batch; one network/service failure switches the whole batch to Liblib.
+  Outside Codex, Liblib creates all images. Liblib/Kling owns image-to-video and Fish owns voice. Use whenever the user wants a Vox
   video, torn-paper collage animation, motion collage, narrated collage explainer, scrapbook
   tribute, or a Stav Zilber / rom1trs / Higgsfield-style collage ad. Supports a topic (B-roll),
   talking-head video (A-roll), or one anchored person/product photo (C-roll). Triggers include
@@ -16,7 +16,7 @@ description: >
 
 Turn a one-line topic into a finished **Vox-style paper-collage video**: a bold, punchy,
 narrated explainer/ad where each beat is a torn-paper collage poster that comes alive, with
-captions. Keyframes prefer **GPT Image 2 in Codex** with a per-image **Liblib fallback**,
+captions. Keyframes use **GPT Image 2 in Codex** with a whole-project **Liblib fallback**,
 motion runs on **Liblib/Kling**, and
 assembly runs on local **ffmpeg**.
 
@@ -40,14 +40,17 @@ Everything hinges on the prompts. **Before writing any image or video prompt, re
 `references/prompt-guide.md`** — it has the exact prompt structures that make the difference
 between "a real Vox collage" and "a moving PowerPoint".
 
-## Prerequisites (check, don't skip)
+## First-use setup (mandatory; check before any production step)
 
-- Run `python3 scripts/configure_credentials.py` once. It requests the two external components
-  separately: Liblib `AccessKey` + `SecretKey` for Kling image-to-video, and Fish Audio
-  `API Key` for narration. Hidden input is saved to this skill directory as `.env` with mode 0600;
-  `.gitignore` excludes it. Codex-native GPT Image 2 needs no additional key. An OpenAI API key
-  is optional only for unattended `image_provider: "openai"` jobs. Never put credentials in
-  `beats.json` or commit `.env`.
+- Run `python3 scripts/configure_credentials.py --check` at the start of the first task. If it
+  reports missing credentials, pause generation and direct the user to run
+  `python3 scripts/configure_credentials.py`. It requests exactly three values in hidden terminal
+  prompts: Liblib `AccessKey`, Liblib `SecretKey`, and Fish Audio `API Key`. Get the Liblib pair at
+  `https://www.liblib.art/apis` and the Fish key at `https://fish.audio/zh-CN/app/api-keys/`.
+  README screenshots show both locations. Never request that users paste secrets into chat.
+- Save the three values only in the skill-local `.env` (mode 0600, git-ignored). Codex chat image
+  generation uses the current Codex session and needs no separate OpenAI API key. Never put
+  credentials in `beats.json` or commit `.env`.
 - Run `python3 scripts/configure_credentials.py --check` before a production job. It reports only
   configured/missing status and never prints key values. Environment variables with the same names
   take precedence over the skill-local `.env`.
@@ -86,20 +89,20 @@ This is the default, most-automated path. Every stage is one script, all driven 
    Set the chosen name as `"collage_style"` in beats.json (keyframes.py reads it).
 
 3. **Keyframes (the collage look).** `python3 scripts/keyframes.py out/<project>`
-   Set `image_provider: "codex"` and `image_model: "gpt-image-2"`. The script writes
-   `keyframes/gpt-image-2-manifest.json`; use Codex image generation on every manifest item,
-   save each PNG at its exact `dest`, then rerun the script to register the local paths.
-   When running as a Codex agent, perform each image-generation call yourself; do not stop
-   after producing the manifest or ask the user to paste prompts manually. Apply a strict
-   **per-image circuit breaker**: attempt Codex exactly once for each manifest item. If that
-   one call returns a network/service error, do not retry Codex for that item. Immediately run
-   `python3 scripts/keyframe_fallback.py out/<project> --only <shot_key>` to generate only the
-   failed keyframe through Liblib. Continue independently for the remaining items, which still
-   get their own single Codex attempt. A content-quality rejection is not a network failure;
-   stop for creative review instead of silently changing providers.
-   For unattended jobs only, set `image_provider: "openai"` and configure `OPENAI_API_KEY`;
-   the same script calls GPT Image 2 directly. The automatic fallback applies to Codex mode;
-   unattended OpenAI API jobs retain their own API retry policy.
+   Set `image_provider: "auto"` (the default) and `image_model: "gpt-image-2"`.
+   - **Inside Codex:** the script writes `keyframes/gpt-image-2-manifest.json`. Generate every
+     manifest item with Codex chat image generation and save each PNG at its exact `dest`; do not
+     ask the user to paste prompts. Treat the project as one provider batch. If every item succeeds,
+     rerun the script to register the paths. If any item has a network/service failure, stop all
+     remaining Codex image calls, do not retry, and immediately run
+     `python3 scripts/keyframe_fallback.py out/<project> --all`. That command creates every
+     keyframe with Liblib and points the project at those files; earlier Codex files stay local but
+     are not used. Never mix Codex and Liblib keyframes in one finished video.
+   - **Outside Codex:** `auto` resolves to Liblib and the script generates the complete keyframe
+     batch directly through Liblib. Video remains on Liblib/Kling.
+   A content-quality rejection is not a network failure; stop for creative review instead of
+   silently switching providers. Explicit `image_provider: "openai"` remains only as a legacy
+   unattended API mode and is not part of the default three-key setup.
    Compose prompts with the 5-part structure in `references/prompt-guide.md`. Verify each poster looks like a *real layered collage*
    before animating. For Chinese or factual labels, prefer `"title": false` and add
    `post_title`/captions locally; generative lettering is not reliable enough for facts.
@@ -126,12 +129,13 @@ This is the default, most-automated path. Every stage is one script, all driven 
 5. **Voice + music.** `python3 scripts/audio.py out/<project>`
    Liblib's documented visual workflow API does not supply TTS or BGM. For narration, either
    set one local `narration_audio` file per beat, or configure `voice.provider: "fish"` with a
-   Fish library/clone `reference_id`. Fish credentials come only from `FISH_API_KEY`; the
-   default model is the free developer tier `s2.1-pro-free`. Set a local `bgm_path` either way.
+   Fish library/clone `reference_id`. Fish credentials come only from `FISH_API_KEY`. If no voice
+   block and no complete local narration are provided, default to Fish `s2.1-pro-free`, voice
+   “历史故事·清晰”, `reference_id: 6fc59d2b56cf402eb572934114c8d8aa`.
+   Set a local `bgm_path` either way.
 
-The provider contract is intentionally split: Codex GPT Image 2 gets first attempt on each
-keyframe, Liblib generates only items whose Codex attempt failed, Liblib/Kling owns
-image-to-video, and Fish Audio owns narration.
+The provider contract is intentionally split: one project uses one keyframe provider (Codex or
+Liblib), Liblib/Kling owns image-to-video, and Fish Audio owns narration.
 
 6. **Assemble.** `python3 scripts/assemble.py out/<project>`
    ffmpeg: normalize + concat all shots, lay narration ducked under the music, burn captions,
@@ -204,6 +208,8 @@ scratch.
 
 C-roll uses Codex GPT Image 2 editing with a local anchor image; it does not use Liblib image
 generation. Liblib is first used after the edited poster exists, when Kling animates it.
+This is the one exception to the non-Codex B-roll routing rule: outside Codex, stop and request
+a configured Liblib reference-image workflow instead of silently degrading identity/product fidelity.
 
 The third input modality — "cutout roll". A-roll re-styles a talking-head VIDEO; B-roll
 generates everything from a topic; **C-roll takes a single still PHOTO** (a selfie, an
@@ -244,12 +250,12 @@ or a collage ad built around a real product shot (validated on both, 2026-07-17)
   "project": "my-film", "topic": "...", "language": "en",
   "aspect": "9:16",                       // 16:9 | 9:16 | 1:1 | 3:4
   "style": "collage",
-  "image_provider": "codex",           // codex (default) | openai (unattended API mode)
+  "image_provider": "auto",            // auto: Codex chat in Codex, otherwise all Liblib
   "image_provider_config": {
     "quality": "medium",
     "max_concurrency": 2
   },
-  "image_fallback_provider": "liblib",  // Codex network failure: switch immediately per image
+  "image_fallback_provider": "liblib",  // any Codex network failure: regenerate the whole batch
   "image_fallback_model": "liblib-ultra",
   "image_fallback_provider_config": {    // optional; defaults to video_provider_config
     "image_steps": 30,
@@ -275,7 +281,7 @@ or a collage ad built around a real product shot (validated on both, 2026-07-17)
   "voice": {                             // optional TTS; omit to use beat narration_audio files
     "provider": "fish",
     "model": "s2.1-pro-free",
-    "reference_id": "Fish library or owned clone model ID",
+    "reference_id": "6fc59d2b56cf402eb572934114c8d8aa", // default: 历史故事·清晰
     "speed": 1.0,
     "temperature": 0.65,
     "top_p": 0.7,
@@ -323,12 +329,12 @@ The defaults split still-image and motion generation:
 
 | Job | Model | Note |
 |---|---|---|
-| Keyframe / collage poster | GPT Image 2 → Liblib | One Codex attempt per image; immediate Liblib fallback on network/service failure |
+| Keyframe / collage poster | Codex GPT Image 2 or Liblib | Codex environment uses one Codex batch; any service failure reroutes the whole batch to Liblib. Non-Codex uses Liblib from the start. |
 | Animate | Kling image-to-video | `/api/generate/video/kling/img2video` |
 | Narration / music | local files | set `narration_audio` per beat and `bgm_path`; not a Liblib workflow API feature |
 
-Use Liblib image generation only through `scripts/keyframe_fallback.py`, after the single Codex
-attempt for that image fails. `scripts/provider.py` handles Liblib fallback generation, video submission and local keyframe upload;
+In Codex, use Liblib fallback through `scripts/keyframe_fallback.py --all` after any Codex
+batch network/service failure. Outside Codex, `keyframes.py` uses Liblib directly. `scripts/provider.py` handles Liblib image generation, video submission and local keyframe upload;
 `scripts/openai_image.py` handles optional unattended GPT Image 2 API generation.
 
 ## Advanced: element-level motion collage
@@ -346,7 +352,7 @@ frame reconstructs the original poster.
 
 ## Editions
 
-- **Workflow edition** (this skill): GPT Image 2 keyframes, Liblib/Kling motion, Fish voice.
+- **Workflow edition** (this skill): Codex-or-Liblib batch keyframes, Liblib/Kling motion, Fish voice.
 - **Manual prompt-pack**: if the user does not have Liblib API access, just produce the beat map + the per-beat
   image prompts + the per-clip motion prompts + the narration script for them to paste into
   any generator. The creative engine (the prompts) is identical.

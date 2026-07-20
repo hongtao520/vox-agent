@@ -6,18 +6,20 @@ Read this before debugging provider failures.
 
 | Job | Model | Provider |
 |---|---|---|
-| Keyframe / collage poster | `gpt-image-2` | Codex image generation; optional OpenAI API mode |
+| Keyframe / collage poster | `gpt-image-2` or `liblib-ultra` | Codex chat batch in Codex; complete Liblib batch outside Codex or after a Codex batch failure |
 | Animate | `kling-v2-1` | Liblib image-to-video |
 | Narration | `s2.1-pro-free` | Fish Audio |
 | Assembly, captions, music mix | local | ffmpeg + Pillow |
 
-Do not route text-to-image through Liblib. `image_provider` accepts only `codex` or `openai`,
-and `image_model` must be GPT Image 2. Keep factual Chinese titles out of the generated image;
+Use `image_provider: auto`: Codex chat image generation inside Codex, otherwise Liblib.
+If any Codex item has a network/service failure, reroute the complete project with
+`keyframe_fallback.py --all`. Keep factual Chinese titles out of the generated image;
 render `post_title` and captions locally.
 
 ## API gotchas
 
-1. GPT Image 2 API mode requires `OPENAI_API_KEY`; Codex-native mode does not.
+1. Codex chat image generation needs no separate API key. Legacy explicit OpenAI API mode
+   requires `OPENAI_API_KEY`, but it is not part of the default three-key setup.
 2. Landscape/portrait API sizes may not exactly match the project aspect. The client
    center-crops the generated frame to the exact target before Kling sees it; keep important
    subjects away from extreme edges.

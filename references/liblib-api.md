@@ -9,20 +9,25 @@ Use signed query parameters on every request:
 - default submission QPS is 1 and default active-task concurrency is 5; keep
   `submit_interval_s` at least `1.0` and `max_concurrency` at most `5`
 
-## Keyframe fallback route
+## Keyframe routes
 
-Attempt each keyframe once through Codex GPT Image 2. On a Codex network/service
-error, open the circuit for that shot and immediately run:
+- In a Codex task, `image_provider: auto` writes a GPT Image 2 manifest. Treat all
+  keyframes in that manifest as one provider batch.
+- Outside Codex, `image_provider: auto` sends the complete image batch directly to
+  Liblib's text-to-image route.
+- In Codex, if any manifest item returns a network/service error, stop all remaining
+  Codex image calls and open the circuit for the whole project:
 
 ```bash
-python3 scripts/keyframe_fallback.py out/<project> --only <shot-key>
+python3 scripts/keyframe_fallback.py out/<project> --all
 ```
 
-Do not retry Codex for that shot. The fallback submits Liblib's default text-to-image
+Do not retry Codex. The fallback submits every project keyframe through Liblib's default text-to-image
 template at `POST /api/generate/webui/text2img/ultra`, polls
 `POST /api/generate/webui/status`, downloads the result immediately, and records
-`keyframe_source.provider: liblib` plus `reason: codex_failed_once` in `beats.json`.
-Successful Codex keyframes remain untouched.
+`keyframe_source.provider: liblib` plus `reason: codex_batch_failed` in `beats.json`.
+Already-generated Codex files remain on disk for recovery, but `beats.json` points every
+shot at a `_liblib.png` file so the final video never mixes providers.
 
 ## Local keyframe upload for Kling
 

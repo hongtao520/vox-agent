@@ -10,6 +10,12 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = SKILL_DIR / ".env"
 
+REQUIRED_CREDENTIALS = (
+    ("LIBLIB_ACCESS_KEY", "Liblib AccessKey", "https://www.liblib.art/apis"),
+    ("LIBLIB_SECRET_KEY", "Liblib SecretKey", "https://www.liblib.art/apis"),
+    ("FISH_API_KEY", "Fish Audio API Key", "https://fish.audio/zh-CN/app/api-keys/"),
+)
+
 
 def _decode(value: str) -> str:
     value = value.strip()
@@ -34,3 +40,24 @@ def load_skill_env() -> Path:
         if key and key.replace("_", "").isalnum():
             os.environ.setdefault(key, _decode(value))
     return ENV_PATH
+
+
+def missing_required_credentials() -> list[tuple[str, str, str]]:
+    """Return missing Vox Agent credentials without ever exposing their values."""
+    load_skill_env()
+    return [item for item in REQUIRED_CREDENTIALS if not os.environ.get(item[0], "").strip()]
+
+
+def require_setup() -> None:
+    """Stop the first production stage with an actionable three-key setup guide."""
+    missing = missing_required_credentials()
+    if not missing:
+        return
+    names = ", ".join(item[0] for item in missing)
+    raise SystemExit(
+        "Vox Agent first-use setup is incomplete. Missing: " + names + "\n"
+        "Create Liblib AccessKey + SecretKey at https://www.liblib.art/apis\n"
+        "Create Fish Audio API Key at https://fish.audio/zh-CN/app/api-keys/\n"
+        "Then run: python3 scripts/configure_credentials.py\n"
+        "Enter secrets only in the hidden terminal prompts; never paste them into beats.json or commit them."
+    )

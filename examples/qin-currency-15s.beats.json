@@ -4,7 +4,7 @@
   "language": "zh-CN",
   "aspect": "16:9",
   "style": "collage",
-  "image_provider": "codex",
+  "image_provider": "auto",
   "image_provider_config": {
     "quality": "medium",
     "max_concurrency": 2
