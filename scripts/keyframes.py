@@ -3,20 +3,20 @@
 Keyframe stage: one styled keyframe per SHOT.
 
 Each beat holds one or more shots (different framings of the same narration
-beat) so the cut has variety. Falls back to one implicit shot per beat if a
-beat has no "shots". Generates concurrently, downloads to
-<project>/keyframes/kf_<beat><shot>.jpg, records url+path onto each shot.
+beat) so the cut has variety. Codex mode writes a GPT Image 2 manifest; API
+mode writes local PNG files directly.
 
 Usage: python3 keyframes.py <project_dir>   (default: out/tang-30s)
 """
 import json
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from provider import get_provider, run_jobs
-from styles import compose_keyframe_prompt, compose_collage_prompt, resolve_theme, image_params
+from openai_image import OpenAIImageClient, normalize_aspect
+from styles import compose_keyframe_prompt, compose_collage_prompt, resolve_theme
 
-IMAGE_MODEL = "liblib-image"
+IMAGE_MODEL = "gpt-image-2"
 
 
 def shots_of(beat):
@@ -33,8 +33,14 @@ def run(project_dir):
     with open(bpath) as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
-    img_model = doc.get("image_model", IMAGE_MODEL)   # default nano-banana-2; e.g. openai/gpt-image-2/text-to-image
-    img_res = doc.get("image_resolution", "1k")       # 1k (default) | 2k | 4k
+    image_provider = str(doc.get("image_provider", "codex")).lower()
+    if image_provider not in {"codex", "openai"}:
+        raise SystemExit("image_provider must be 'codex' or 'openai'; Liblib keyframe generation has been removed")
+    img_model = doc.get("image_model", IMAGE_MODEL)
+    if not str(img_model).startswith("gpt-image-2"):
+        raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")
+    image_config = doc.get("image_provider_config") or {}
+    quality = image_config.get("quality", doc.get("image_quality", "medium"))
     style = doc.get("style", "painterly")
     theme = resolve_theme(doc.get("theme")) or {}   # theme preset -> full look bundle
     collage_style = theme.get("idiom") or doc.get("collage_style", "american-retro")
@@ -46,11 +52,13 @@ def run(project_dir):
     kf_dir = os.path.join(project_dir, "keyframes")
     os.makedirs(kf_dir, exist_ok=True)
 
-    prov = get_provider(doc.get("provider"), doc.get("provider_config"))
-    specs, by_key = {}, {}
+    jobs, by_key = {}, {}
     for beat in doc["beats"]:
         for shot, key in shots_of(beat):
-            if shot.get("keyframe_url"):        # already generated (e.g. reused wide) -> skip
+            existing = shot.get("keyframe_path")
+            existing_path = (existing if not existing or os.path.isabs(existing)
+                             else os.path.join(project_dir, existing))
+            if shot.get("keyframe_url") or (existing_path and os.path.exists(existing_path)):
                 continue
             scene = shot["scene"]
             if style == "collage":
@@ -63,21 +71,49 @@ def run(project_dir):
                 prompt = compose_keyframe_prompt(era, scene, beat["title_cn"],
                                                  beat["title_en"], aspect)
             shot["keyframe_prompt"] = prompt
-            specs[key] = (lambda p=prompt: prov.submit_image(img_model, p,
-                                                             **image_params(img_model, aspect, img_res)))
+            dest = os.path.join(kf_dir, f"kf_{key}.png")
+            if os.path.exists(dest):
+                normalize_aspect(dest, aspect)
+                shot["keyframe_path"] = os.path.abspath(dest)
+                shot["keyframe_source"] = {"provider": image_provider, "model": img_model}
+                print(f"[{key}] registered existing {dest}")
+                continue
+            jobs[key] = (prompt, dest)
             by_key[key] = shot
 
-    done = run_jobs(prov, specs, poll_s=3, stall_s=75, max_retries=2, deadline_s=300)
-
-    for key, url in done.items():
-        if not url:
-            continue
-        dest = os.path.join(kf_dir, f"kf_{key}.jpg")
-        prov.download(url, dest)
-        shot = by_key[key]
-        shot["keyframe_url"] = url
-        shot["keyframe_path"] = dest
-        print(f"[{key}] saved {dest}")
+    if image_provider == "codex":
+        manifest_path = os.path.join(kf_dir, "gpt-image-2-manifest.json")
+        manifest = {
+            "model": img_model,
+            "aspect": aspect,
+            "instruction": "Use Codex image generation for every item and save the PNG at dest, then rerun keyframes.py to register it.",
+            "items": [
+                {"key": key, "prompt": prompt, "dest": os.path.abspath(dest)}
+                for key, (prompt, dest) in jobs.items()
+            ],
+        }
+        with open(manifest_path, "w") as f:
+            json.dump(manifest, f, ensure_ascii=False, indent=2)
+        print(f"Codex GPT Image 2 manifest -> {manifest_path}")
+        if jobs:
+            print("Generate every manifest item with Codex image generation, save it at dest, then rerun this command.")
+    else:
+        client = OpenAIImageClient(image_config)
+        workers = max(1, int(image_config.get("max_concurrency", 2)))
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(client.generate, prompt, dest, model=img_model, aspect=aspect,
+                            quality=quality, output_format="png"): key
+                for key, (prompt, dest) in jobs.items()
+            }
+            for future in as_completed(futures):
+                key = futures[future]
+                dest = future.result()
+                shot = by_key[key]
+                shot["keyframe_path"] = dest
+                shot["keyframe_source"] = {"provider": "openai", "model": img_model}
+                shot.pop("keyframe_url", None)
+                print(f"[{key}] GPT Image 2 saved {dest}")
 
     with open(bpath, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

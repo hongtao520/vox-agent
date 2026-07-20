@@ -4,9 +4,13 @@
   "language": "zh-CN",
   "aspect": "16:9",
   "style": "collage",
-  "provider": "liblib",
-  "provider_config": {
-    "image_steps": 30,
+  "image_provider": "codex",
+  "image_provider_config": {
+    "quality": "medium",
+    "max_concurrency": 2
+  },
+  "video_provider": "liblib",
+  "video_provider_config": {
     "kling_model": "kling-v2-1",
     "prompt_magic": 0,
     "video_mode": "std",
@@ -15,9 +19,9 @@
   },
   "theme": "chinese-ink",
   "arc": "timeline",
-  "image_model": "liblib-image",
+  "image_model": "gpt-image-2",
   "video_model": "liblib-i2v",
-  "image_resolution": "1k",
+  "image_quality": "medium",
   "video_resolution": "720p",
   "motion_style": "punchy",
   "constraints": "strict",

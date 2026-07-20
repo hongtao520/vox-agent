@@ -9,17 +9,18 @@ don't default to Chinese motifs for a Western topic. Then the human picks by eye
 
 Usage:
   python3 style_bakeoff.py <project_dir> [style1,style2,...] [beat_index]
-Defaults: the 4 Western library styles, beat 0. Output -> <project>/style-bakeoff/<style>.jpg
-Then set  "collage_style": "<pick>"  in beats.json, clear old keyframe_url/path, re-run keyframes.
+Defaults: the 4 Western library styles, beat 0. Output -> <project>/style-bakeoff/<style>.png
+In Codex mode, generate the manifest items first. Then set "collage_style": "<pick>".
 """
 import json
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from provider import get_provider, run_jobs
-from styles import compose_collage_prompt, STYLE_LIBRARY, THEME_PRESETS, resolve_theme, image_params
+from openai_image import OpenAIImageClient
+from styles import compose_collage_prompt, STYLE_LIBRARY, THEME_PRESETS, resolve_theme
 
-IMAGE_MODEL = "google/nano-banana-2/text-to-image"
+IMAGE_MODEL = "gpt-image-2"
 # candidates are THEME names (full look bundles); Claude picks topic-fitting ones
 DEFAULT_CANDIDATES = ["american-retro", "swiss-modern", "punk-zine", "atomic-age"]
 
@@ -33,31 +34,56 @@ def run(project_dir, styles=None, beat_index=0):
     with open(os.path.join(project_dir, "beats.json")) as f:
         doc = json.load(f)
     aspect = doc.get("aspect", "16:9")
+    image_provider = str(doc.get("image_provider", "codex")).lower()
     img_model = doc.get("image_model", IMAGE_MODEL)
-    img_res = doc.get("image_resolution", "1k")
+    if not str(img_model).startswith("gpt-image-2"):
+        raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")
+    image_config = doc.get("image_provider_config") or {}
+    quality = image_config.get("quality", doc.get("image_quality", "medium"))
     beat = doc["beats"][beat_index]
     shot = first_shot(beat)
     scene, bg = shot["scene"], beat.get("bg", "warm ochre")
     tcn, ten = beat.get("title_cn", ""), beat.get("title_en", "")
     out = os.path.join(project_dir, "style-bakeoff"); os.makedirs(out, exist_ok=True)
 
-    prov = get_provider(doc.get("provider"))
     specs = {}
     for name in styles:
         tp = resolve_theme(name) or {}              # theme name -> full look bundle
         prompt = compose_collage_prompt(scene, tcn, ten, bg, aspect,
                                         style=tp.get("idiom", name), palette=tp.get("palette"),
                                         type_style=tp.get("type_style"), finish=tp.get("finish"))
-        specs[name] = (lambda p=prompt: prov.submit_image(img_model, p,
-                                                          **image_params(img_model, aspect, img_res)))
+        specs[name] = (prompt, os.path.join(out, f"{name}.png"))
         tag = "library" if name in STYLE_LIBRARY else "custom"
         print(f"[{name}] ({tag}) queued")
 
-    done = run_jobs(prov, specs, poll_s=3, stall_s=75, max_retries=2, deadline_s=240)
-
-    for name, url in done.items():
-        if url:
-            prov.download(url, os.path.join(out, f"{name}.jpg"))
+    if image_provider == "codex":
+        manifest = {
+            "model": img_model,
+            "aspect": aspect,
+            "instruction": "Use Codex image generation for every item and save the PNG at dest.",
+            "items": [
+                {"key": name, "prompt": prompt, "dest": os.path.abspath(dest)}
+                for name, (prompt, dest) in specs.items()
+            ],
+        }
+        manifest_path = os.path.join(out, "gpt-image-2-manifest.json")
+        with open(manifest_path, "w") as f:
+            json.dump(manifest, f, ensure_ascii=False, indent=2)
+        print(f"Codex GPT Image 2 manifest -> {manifest_path}")
+    elif image_provider == "openai":
+        client = OpenAIImageClient(image_config)
+        workers = max(1, int(image_config.get("max_concurrency", 2)))
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(client.generate, prompt, dest, model=img_model, aspect=aspect,
+                            quality=quality, output_format="png"): name
+                for name, (prompt, dest) in specs.items()
+            }
+            for future in as_completed(futures):
+                name = futures[future]
+                print(f"[{name}] saved {future.result()}")
+    else:
+        raise SystemExit("image_provider must be 'codex' or 'openai'; Liblib keyframe generation has been removed")
     print(f"\nsaved candidates to {out} — review, then set \"collage_style\" in beats.json.")
 
 

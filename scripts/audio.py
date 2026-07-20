@@ -4,7 +4,7 @@
 Liblib's documented workflow API generates images/video, not a stable TTS/BGM
 service. Fish Audio is the optional TTS provider; local narration remains valid.
 """
-import json, os, subprocess, sys, wave
+import json, os, re, subprocess, sys, wave
 from fish_audio import generate_project
 
 EDGE_TRIM = (
@@ -23,6 +23,21 @@ def probe_dur(path):
     except OSError:
         pass
     except ValueError:
+        pass
+    # ffprobe is not bundled by every macOS ffmpeg distribution. Fall back to
+    # ffmpeg's input summary so assembly works with an ffmpeg-only install.
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-i", path, "-f", "null", "-"],
+            capture_output=True, text=True,
+        )
+        match = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", result.stderr)
+        if match:
+            hours, minutes, seconds = match.groups()
+            value = int(hours) * 3600 + int(minutes) * 60 + float(seconds)
+            if value > 0:
+                return value
+    except OSError:
         pass
     if str(path).lower().endswith(".wav"):
         try:

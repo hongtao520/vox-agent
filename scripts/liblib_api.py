@@ -14,10 +14,12 @@ import base64
 import hashlib
 import hmac
 import json
+import mimetypes
 import os
 import secrets
 import time
 from pathlib import Path
+from urllib.parse import quote
 from urllib.parse import urlencode
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -123,6 +125,71 @@ class LiblibClient:
             return {"status": "failed", "output": None,
                     "error": self._lookup(data, "data.generateMsg") or data.get("msg") or data.get("message") or str(data)[:500]}
         return {"status": "pending", "output": None, "error": None}
+
+    def upload(self, path):
+        """Upload a local jpg/png to Liblib's temporary OSS and return its HTTPS URL."""
+        source = Path(path).expanduser().resolve()
+        if not source.is_file():
+            raise LiblibError(f"upload file does not exist: {source}")
+        extension = source.suffix.lower().lstrip(".")
+        if extension not in {"jpg", "jpeg", "png"}:
+            raise LiblibError("Liblib upload supports only jpg, jpeg and png")
+        if source.stat().st_size > 10 * 1024 * 1024:
+            raise LiblibError("Liblib upload image must not exceed 10 MB")
+
+        signed = self._request(
+            "/api/generate/upload/signature",
+            {"name": source.stem[:100], "extension": extension},
+        )
+        info = signed.get("data") or {}
+        required = {
+            "key": info.get("key"),
+            "policy": info.get("policy"),
+            "x-oss-date": info.get("xOssDate"),
+            "x-oss-expires": info.get("xOssExpires"),
+            "x-oss-signature": info.get("xOssSignature"),
+            "x-oss-credential": info.get("xOssCredential"),
+            "x-oss-signature-version": info.get("xOssSignatureVersion"),
+        }
+        post_url = str(info.get("postUrl") or "").rstrip("/")
+        if not post_url or any(value in (None, "") for value in required.values()):
+            raise LiblibError(
+                "Liblib upload signature response is incomplete: "
+                + json.dumps(signed, ensure_ascii=False)[:800]
+            )
+
+        boundary = "----vox-director-" + secrets.token_hex(12)
+        chunks = []
+        for name, value in required.items():
+            chunks.extend([
+                f"--{boundary}\r\n".encode(),
+                f'Content-Disposition: form-data; name="{name}"\r\n\r\n'.encode(),
+                str(value).encode(), b"\r\n",
+            ])
+        mime = mimetypes.guess_type(source.name)[0] or "application/octet-stream"
+        chunks.extend([
+            f"--{boundary}\r\n".encode(),
+            f'Content-Disposition: form-data; name="file"; filename="{source.name}"\r\n'.encode(),
+            f"Content-Type: {mime}\r\n\r\n".encode(),
+            source.read_bytes(), b"\r\n",
+            f"--{boundary}--\r\n".encode(),
+        ])
+        req = Request(
+            post_url,
+            data=b"".join(chunks),
+            headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+            method="POST",
+        )
+        try:
+            with urlopen(req, timeout=int(self.config.get("upload_timeout_s", 180))) as response:
+                if response.status not in {200, 201, 204}:
+                    raise LiblibError(f"Liblib OSS upload returned HTTP {response.status}")
+        except HTTPError as exc:
+            detail = exc.read().decode("utf-8", "replace")[:1000]
+            raise LiblibError(f"Liblib OSS upload HTTP {exc.code}: {detail}") from exc
+        except URLError as exc:
+            raise LiblibError(f"Liblib OSS upload failed: {exc}") from exc
+        return post_url + "/" + quote(str(required["key"]), safe="/")
 
     @staticmethod
     def download(url, dest):

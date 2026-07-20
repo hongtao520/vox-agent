@@ -34,10 +34,10 @@ import json
 import os
 import sys
 
-from provider import get_provider, run_jobs
-from styles import compose_collage_prompt, resolve_theme, image_params
+from openai_image import normalize_aspect
+from styles import compose_collage_prompt, resolve_theme
 
-EDIT_MODEL = "liblib-image-edit"
+EDIT_MODEL = "gpt-image-2"
 
 FACE_LOCK = (
     "The person's face and hair from the attached photo are cut out as a PHOTOGRAPHIC "
@@ -97,23 +97,39 @@ def run(project_dir):
         doc = json.load(f)
     photo = doc["anchor_photo"]
     aspect = doc.get("aspect", "9:16")
+    image_provider = str(doc.get("image_provider", "codex")).lower()
+    if image_provider != "codex":
+        raise SystemExit("C-roll keyframes currently require image_provider='codex' with GPT Image 2 editing")
     img_model = doc.get("image_model", EDIT_MODEL)
-    img_res = doc.get("image_resolution", "2k")
+    if not str(img_model).startswith("gpt-image-2"):
+        raise SystemExit("image_model must be gpt-image-2 (or a gpt-image-2 snapshot)")
     theme = resolve_theme(doc.get("theme")) or {}
     collage_style = theme.get("idiom") or doc.get("collage_style", "newsprint-editorial")
     lock, kind = build_lock(doc)
     kf_dir = os.path.join(project_dir, "keyframes")
     os.makedirs(kf_dir, exist_ok=True)
 
-    prov = get_provider(doc.get("provider"), doc.get("provider_config"))
-    photo_url = photo if photo.startswith("http") else prov.upload(photo)
-    doc["anchor_photo_url"] = photo_url
+    if str(photo).startswith(("http://", "https://")):
+        raise SystemExit("Codex GPT Image 2 editing needs anchor_photo as a local file path")
+    photo = os.path.expanduser(photo)
+    photo = os.path.abspath(photo if os.path.isabs(photo) else os.path.join(project_dir, photo))
+    if not os.path.isfile(photo):
+        raise SystemExit(f"anchor_photo does not exist: {photo}")
     doc["anchor_freeze"] = FREEZE[kind]
 
-    specs, by_key = {}, {}
+    items = []
     for beat in doc["beats"]:
         for shot, key in shots_of(beat):
-            if shot.get("keyframe_url"):
+            dest = os.path.abspath(os.path.join(kf_dir, f"kf_{key}.png"))
+            existing = shot.get("keyframe_path")
+            existing_path = (existing if not existing or os.path.isabs(existing)
+                             else os.path.join(project_dir, existing))
+            if shot.get("keyframe_url") or (existing_path and os.path.exists(existing_path)):
+                continue
+            if os.path.exists(dest):
+                normalize_aspect(dest, aspect)
+                shot["keyframe_path"] = dest
+                shot["keyframe_source"] = {"provider": "codex", "model": img_model, "mode": "edit"}
                 continue
             world = compose_collage_prompt(shot["scene"], "", "",
                                            beat.get("bg", "flat cream paper"), aspect,
@@ -123,21 +139,18 @@ def run(project_dir):
                                            finish=theme.get("finish") or doc.get("finish"))
             prompt = lock + world + CROLL_GUARDS
             shot["keyframe_prompt"] = prompt
-            specs[key] = (lambda p=prompt: prov.submit_image(
-                img_model, p, images=[photo_url], **image_params(img_model, aspect, img_res)))
-            by_key[key] = shot
+            items.append({"key": key, "prompt": prompt, "dest": dest,
+                          "reference_images": [photo]})
 
-    done = run_jobs(prov, specs, poll_s=3, stall_s=90, max_retries=2, deadline_s=420)
-
-    for key, url in done.items():
-        if not url:
-            continue
-        dest = os.path.join(kf_dir, f"kf_{key}.jpg")
-        prov.download(url, dest)
-        shot = by_key[key]
-        shot["keyframe_url"] = url
-        shot["keyframe_path"] = dest
-        print(f"[{key}] saved {dest}")
+    manifest_path = os.path.join(kf_dir, "gpt-image-2-edit-manifest.json")
+    with open(manifest_path, "w") as f:
+        json.dump({
+            "model": img_model,
+            "aspect": aspect,
+            "instruction": "Edit with Codex image generation using reference_images; save each PNG at dest, then rerun croll_keyframes.py.",
+            "items": items,
+        }, f, ensure_ascii=False, indent=2)
+    print(f"Codex GPT Image 2 edit manifest -> {manifest_path}")
 
     with open(bpath, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

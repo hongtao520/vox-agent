@@ -11,7 +11,7 @@ import json
 import os
 import sys
 
-from provider import get_provider, run_jobs
+from provider import get_video_provider, run_jobs
 from styles import resolve_theme, resolve_video_aspect
 
 VIDEO_MODEL = "liblib-i2v"
@@ -130,16 +130,21 @@ def run(project_dir, only=None):
     if resolved_aspect:
         aspect = resolved_aspect   # every shot below shares this one resolved aspect
 
-    prov = get_provider(doc.get("provider"), doc.get("provider_config"))
+    video_name = doc.get("video_provider") or doc.get("provider") or "liblib"
+    video_config = doc.get("video_provider_config") or doc.get("provider_config")
+    prov = get_video_provider(video_name, video_config)
     specs, by_key = {}, {}
     for beat in doc["beats"]:
         for shot, key in shots_of(beat):
             if only and key not in only:
                 continue
             url = shot.get("keyframe_url")
-            if not url and shot.get("keyframe_path") and os.path.exists(shot["keyframe_path"]):
+            local_keyframe = shot.get("keyframe_path")
+            if local_keyframe and not os.path.isabs(local_keyframe):
+                local_keyframe = os.path.join(project_dir, local_keyframe)
+            if not url and local_keyframe and os.path.exists(local_keyframe):
                 # user-provided keyframe (e.g. hand-made collage card) -> upload it
-                url = prov.upload(shot["keyframe_path"])
+                url = prov.upload(local_keyframe)
                 shot["keyframe_url"] = url
                 print(f"[{key}] uploaded provided keyframe -> {url}")
             if not url:

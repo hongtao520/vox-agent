@@ -1,8 +1,8 @@
 # Vox Director
 
-用 **Liblib 图像/视频 API + Fish Audio 配音 + 本地 ffmpeg**，把一个主题制作成 VOX 风格的纸张拼贴解说视频。
+用 **Codex GPT Image 2 + Liblib 图片回退/Kling + Fish Audio + 本地 ffmpeg**，把一个主题制作成 VOX 风格的纸张拼贴解说视频。
 
-本仓库是经过实际成片验证的版本：Liblib 负责拼贴关键帧和图生视频，Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
+每张关键帧优先调用一次 Codex GPT Image 2；若该次出现网络或服务异常，立即只将失败的那张切换到 Liblib 生图，不重试 Codex。关键帧完成后由 Liblib/Kling 图生视频；Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
 
 ## 视频样例：秦始皇统一货币
 
@@ -13,10 +13,14 @@
 - 主题：秦始皇统一货币
 - 规格：中文、16:9、1920×1080、15 秒、24 fps
 - 视觉：中式水墨、旧纸、报刊、朱砂印章、考古钱币拼贴
-- 视频生成：Liblib Star-3 Alpha + Kling image-to-video
+- 关键帧：迁移前样例使用 Liblib Star-3 Alpha（新项目已改为 GPT Image 2）
+- 视频生成：Liblib Kling image-to-video
 - 配音：Fish Audio `s2.1-pro-free`
 - 音色：历史故事·清晰，`reference_id=6fc59d2b56cf402eb572934114c8d8aa`
 - 旁白节奏：句间 0.10 秒，自动裁掉 TTS 文件头尾静音
+
+仓库里的这条 MP4 保留作为节奏与成片结构参考；它生成于 GPT Image 2 迁移前。
+当前代码优先使用 GPT Image 2；只有单张图片的 Codex 请求失败时才使用 Liblib 回退。
 
 ## 1. 安装
 
@@ -33,7 +37,7 @@ cd ~/.codex/skills/vox-director
 - `ffmpeg` 与 `ffprobe`
 - Pillow：`python3 -m pip install Pillow`
 
-## 2. 配置两个服务组件
+## 2. 配置两个外部服务组件
 
 运行一次隐藏输入配置器：
 
@@ -43,7 +47,7 @@ python3 scripts/configure_credentials.py
 
 它会分别要求：
 
-1. **Liblib 图像/图生视频组件**
+1. **Liblib Kling 图生视频组件**
    - `LIBLIB_ACCESS_KEY`
    - `LIBLIB_SECRET_KEY`
 2. **Fish Audio 配音组件**
@@ -56,6 +60,10 @@ python3 scripts/configure_credentials.py --check
 ```
 
 不要把密钥写进 `beats.json`、提交记录、截图或聊天内容。
+
+默认的 `image_provider: "codex"` 直接使用 Codex 图片生成能力，不需要 OpenAI API Key。
+只有无人值守批处理改为 `image_provider: "openai"` 时，才需要额外配置可选的
+`OPENAI_API_KEY`。
 
 ## 3. 准备项目
 
@@ -80,11 +88,28 @@ cp examples/qin-currency-15s.beats.json out/qin-currency-15s/beats.json
 python3 scripts/style_bakeoff.py out/qin-currency-15s chinese-ink,newsprint-editorial,soviet-constructivist
 ```
 
-确认风格后生成每个镜头的拼贴关键帧：
+Codex 模式同样会先写出 style-bakeoff manifest；生成其中图片后再进行目视选择。
+
+确认风格后准备每个镜头的 GPT Image 2 拼贴关键帧：
 
 ```bash
 python3 scripts/keyframes.py out/qin-currency-15s
 ```
+
+默认会写出 `keyframes/gpt-image-2-manifest.json`。在 Codex 中逐项调用图片生成，按
+manifest 的 `dest` 保存 PNG，然后再次运行同一命令登记关键帧路径。后续
+`clips.py` 会自动把本地 PNG 上传到 Liblib 临时 OSS，再交给 Kling。
+
+每张图片的 Codex 请求只尝试一次。若某张返回网络或服务错误，立即执行：
+
+```bash
+python3 scripts/keyframe_fallback.py out/qin-currency-15s --only 2a
+```
+
+把 `2a` 替换为实际失败的镜头编号。脚本只生成缺失镜头，不会覆盖或重新计费已成功图片；如果下载后本地后处理意外中断，再次运行会从已下载文件恢复。
+
+使用 Skill 时这些步骤由 Codex 自己执行；manifest 是 Codex 与本地脚本之间的任务
+协议，不是要求用户手工复制提示词。
 
 检查重点：
 
@@ -138,7 +163,8 @@ python3 scripts/audio.py out/qin-currency-15s
   "narration_timing": {
     "mode": "continuous",
     "gap_s": 0.1,
-    "lead_in_s": 0.12
+    "lead_in_s": 0.12,
+    "tail_s": 0.5
   }
 }
 ```
@@ -149,6 +175,8 @@ python3 scripts/audio.py out/qin-currency-15s
 - 把镜头切点移动到下一句话的起点
 - 让字幕跟随真实语音起止时间
 - 保持设定的总视频时长，把多余留白放在结尾而不是句子之间
+
+短视频需要旁白说到接近结尾时，可缩短 `tail_s`；例如 15 秒视频设为 `0.25`，但应保留至少约 0.2 秒自然收束。
 
 只有在需要刻意停顿时才使用 `"mode": "beat_locked"`。
 

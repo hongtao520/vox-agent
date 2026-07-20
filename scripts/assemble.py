@@ -11,6 +11,7 @@ Usage: python3 assemble.py <project_dir>   (default: out/tang-30s)
 """
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -26,12 +27,27 @@ def ff(args):
 
 
 def probe_dur(path):
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                          "-of", "csv=p=0", path], capture_output=True, text=True).stdout
+    try:
+        out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                              "-of", "csv=p=0", path], capture_output=True, text=True).stdout
+    except OSError:
+        out = ""
     try:
         return float(out.strip())
     except ValueError:
-        return 0.0
+        pass
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-i", path, "-f", "null", "-"],
+            capture_output=True, text=True,
+        )
+        match = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", result.stderr)
+        if match:
+            hours, minutes, seconds = match.groups()
+            return int(hours) * 3600 + int(minutes) * 60 + float(seconds)
+    except OSError:
+        pass
+    return 0.0
 
 
 def shots_of(beat):
@@ -56,6 +72,7 @@ def run(project_dir):
     timing_mode = timing.get("mode", "continuous")
     narration_gap = max(0.0, float(timing.get("gap_s", 0.1)))
     narration_lead = max(0.0, float(timing.get("lead_in_s", 0.12)))
+    narration_tail = max(0.0, float(timing.get("tail_s", TAIL)))
     tmp = os.path.join(project_dir, "_seg")
     os.makedirs(tmp, exist_ok=True)
 
@@ -67,7 +84,7 @@ def run(project_dir):
     if timing_mode == "continuous":
         required = (narration_lead
                     + sum(float(b.get("narration_dur", 0)) for b in beats)
-                    + narration_gap * max(len(beats) - 1, 0) + TAIL)
+                    + narration_gap * max(len(beats) - 1, 0) + narration_tail)
         planned_total = max(base_total, required)
         visual_targets, used = [], 0.0
         for i, beat in enumerate(beats):
@@ -98,7 +115,7 @@ def run(project_dir):
             durs[-1] += target - sum(durs)
         else:
             # Legacy beat-locked mode: each line starts at its visual beat boundary.
-            need = float(beat.get("narration_dur", sum(durs))) + TAIL
+            need = float(beat.get("narration_dur", sum(durs))) + narration_tail
             if sum(durs) < need:
                 durs[-1] += need - sum(durs)
         for s, d in zip(shot_list, durs):
@@ -119,6 +136,7 @@ def run(project_dir):
             "mode": timing_mode,
             "gap_s": narration_gap if timing_mode == "continuous" else None,
             "lead_in_s": narration_lead if timing_mode == "continuous" else None,
+            "tail_s": narration_tail,
             "total_s": total,
             "beats": [{
                 "id": ns["beat"]["id"],

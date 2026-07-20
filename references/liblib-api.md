@@ -9,12 +9,28 @@ Use signed query parameters on every request:
 - default submission QPS is 1 and default active-task concurrency is 5; keep
   `submit_interval_s` at least `1.0` and `max_concurrency` at most `5`
 
-## Default keyframe route
+## Keyframe fallback route
 
-- submit: `POST /api/generate/webui/text2img/ultra`
-- template: `5d7e67009b344550bc1aa6ccbfa1d7f4` (Star-3 Alpha text-to-image)
-- status: `POST /api/generate/webui/status`
-- request fields: `templateUuid`, `generateParams.prompt`, `imageSize`, `imgCount`, `steps`
+Attempt each keyframe once through Codex GPT Image 2. On a Codex network/service
+error, open the circuit for that shot and immediately run:
+
+```bash
+python3 scripts/keyframe_fallback.py out/<project> --only <shot-key>
+```
+
+Do not retry Codex for that shot. The fallback submits Liblib's default text-to-image
+template at `POST /api/generate/webui/text2img/ultra`, polls
+`POST /api/generate/webui/status`, downloads the result immediately, and records
+`keyframe_source.provider: liblib` plus `reason: codex_failed_once` in `beats.json`.
+Successful Codex keyframes remain untouched.
+
+## Local keyframe upload for Kling
+
+- request a signed upload with `POST /api/generate/upload/signature`
+- body: `name` plus `extension` (`jpg`, `jpeg`, or `png`); image limit is 10 MB
+- multipart POST the returned OSS fields to `postUrl`; put the `file` field last
+- the public input URL is `postUrl + "/" + key`
+- the signature expires after one hour; upload immediately before submitting Kling
 
 ## Default video route
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Securely collect Liblib + Fish credentials into the skill-local .env."""
+"""Securely collect GPT Image 2, Liblib/Kling and Fish credentials."""
 from __future__ import annotations
 
 import argparse
@@ -10,6 +10,10 @@ from pathlib import Path
 
 from credentials import ENV_PATH, load_skill_env
 
+
+OPTIONAL = (
+    ("OPENAI_API_KEY", "OpenAI API Key (optional API-mode GPT Image 2)"),
+)
 
 REQUIRED = (
     ("LIBLIB_ACCESS_KEY", "Liblib AccessKey"),
@@ -25,7 +29,9 @@ def status() -> bool:
     if missing:
         print("missing: " + ", ".join(missing))
         return False
-    print("Liblib image/video: configured")
+    print("Codex GPT Image 2 keyframes: no API key required")
+    print("OpenAI API-mode keyframes: " + ("configured" if os.environ.get("OPENAI_API_KEY", "").strip() else "not configured (optional)"))
+    print("Liblib Kling image-to-video: configured")
     print("Fish Audio voice: configured")
     return True
 
@@ -38,10 +44,14 @@ def configure() -> None:
         if not value:
             raise SystemExit(f"{label} is required; no file was written")
         values[name] = value
+    for name, label in OPTIONAL:
+        value = getpass.getpass(f"{label}; press Enter to skip: ").strip()
+        if value:
+            values[name] = value
     lines = [
         "# Local provider credentials. Never commit this file.",
-        "# Liblib handles collage images and image-to-video; Fish handles narration.",
-        *(f"{name}={json.dumps(values[name])}" for name, _ in REQUIRED),
+        "# OpenAI handles keyframes; Liblib/Kling handles image-to-video; Fish handles narration.",
+        *(f"{name}={json.dumps(value)}" for name, value in values.items()),
         "",
     ]
     ENV_PATH.write_text("\n".join(lines), encoding="utf-8")

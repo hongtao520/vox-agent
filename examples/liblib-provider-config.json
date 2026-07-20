@@ -1,11 +1,10 @@
 {
-  "provider": "liblib",
-  "provider_config": {
+  "video_provider": "liblib",
+  "video_provider_config": {
     "access_key_env": "LIBLIB_ACCESS_KEY",
     "secret_key_env": "LIBLIB_SECRET_KEY",
     "max_concurrency": 5,
     "submit_interval_s": 1.05,
-    "image_steps": 30,
     "kling_model": "kling-v2-1",
     "prompt_magic": 0,
     "video_mode": "std",
