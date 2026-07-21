@@ -3,7 +3,7 @@ name: vox-agent
 description: >
   Turn one topic into a finished Vox-style paper-collage explainer or ad: script, collage
   keyframes, motion, Fish Audio narration, captions, and local ffmpeg assembly. In Codex, GPT Image 2
-  creates the whole keyframe batch; one network/service failure switches the whole batch to Liblib.
+  assigns one parallel subagent to every keyframe; one network/service failure switches the whole batch to Liblib.
   Outside Codex, Liblib creates all images. Liblib/Kling owns image-to-video and Fish owns voice. Use whenever the user wants a Vox
   video, torn-paper collage animation, motion collage, narrated collage explainer, scrapbook
   tribute, or a Stav Zilber / rom1trs / Higgsfield-style collage ad. Supports a topic (B-roll),
@@ -90,11 +90,15 @@ This is the default, most-automated path. Every stage is one script, all driven 
 
 3. **Keyframes (the collage look).** `python3 scripts/keyframes.py out/<project>`
    Set `image_provider: "auto"` (the default) and `image_model: "gpt-image-2"`.
-   - **Inside Codex:** the script writes `keyframes/gpt-image-2-manifest.json`. Generate every
-     manifest item with Codex chat image generation and save each PNG at its exact `dest`; do not
-     ask the user to paste prompts. Treat the project as one provider batch. If every item succeeds,
-     rerun the script to register the paths. If any item has a network/service failure, stop all
-     remaining Codex image calls, do not retry, and immediately run
+   - **Inside Codex:** the script writes `keyframes/gpt-image-2-manifest.json`. Read
+     `references/codex-parallel-keyframes.md`, count manifest items as `N`, and request exactly
+     `N` logical subagents: one image per agent. Start all available agents concurrently; when the
+     runtime concurrency cap is lower than `N`, queue the rest and refill slots immediately. The
+     root agent must orchestrate and validate, not generate manifest images sequentially. Each
+     worker calls Codex image generation once, saves only its assigned PNG at the exact `dest`, and
+     never edits JSON. Treat the project as one provider batch. If every item succeeds, rerun the
+     script to register paths. If any item has a network/service failure, interrupt unfinished
+     image workers, do not retry, and immediately run
      `python3 scripts/keyframe_fallback.py out/<project> --all`. That command creates every
      keyframe with Liblib and points the project at those files; earlier Codex files stay local but
      are not used. Never mix Codex and Liblib keyframes in one finished video.
@@ -329,7 +333,7 @@ The defaults split still-image and motion generation:
 
 | Job | Model | Note |
 |---|---|---|
-| Keyframe / collage poster | Codex GPT Image 2 or Liblib | Codex environment uses one Codex batch; any service failure reroutes the whole batch to Liblib. Non-Codex uses Liblib from the start. |
+| Keyframe / collage poster | Codex GPT Image 2 or Liblib | Codex uses one parallel subagent per image; any service failure reroutes the whole batch to Liblib. Non-Codex uses Liblib from the start. |
 | Animate | Kling image-to-video | `/api/generate/video/kling/img2video` |
 | Narration / music | local files | set `narration_audio` per beat and `bgm_path`; not a Liblib workflow API feature |
 

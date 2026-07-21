@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import fish_audio
+import codex_parallel
 import keyframe_fallback
 import keyframes
 import runtime
@@ -37,6 +38,12 @@ class RuntimeRoutingTests(unittest.TestCase):
             [item[0] for item in REQUIRED_CREDENTIALS],
             ["LIBLIB_ACCESS_KEY", "LIBLIB_SECRET_KEY", "FISH_API_KEY"],
         )
+
+    def test_parallel_contract_requests_one_agent_per_image(self):
+        contract = codex_parallel.execution_contract(7)
+        self.assertEqual(contract["strategy"], "one_subagent_per_image")
+        self.assertEqual(contract["requested_subagents"], 7)
+        self.assertEqual(contract["max_images_per_subagent"], 1)
 
 
 class ProjectFallbackTests(unittest.TestCase):
@@ -79,6 +86,24 @@ class ProjectFallbackTests(unittest.TestCase):
                 beat["keyframe_source"]["provider"] == "liblib"
                 for beat in result["beats"]
             ))
+
+    def test_codex_manifest_scales_subagents_to_image_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            (project / "beats.json").write_text(
+                json.dumps(self._project_doc()), encoding="utf-8"
+            )
+            with mock.patch.object(keyframes, "require_setup"), \
+                 mock.patch.object(keyframes, "resolve_image_provider", return_value="codex"):
+                keyframes.run(str(project))
+
+            manifest = json.loads(
+                (project / "keyframes" / "gpt-image-2-manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(len(manifest["items"]), 2)
+            self.assertEqual(manifest["execution"]["requested_subagents"], 2)
+            self.assertEqual(manifest["execution"]["max_images_per_subagent"], 1)
+            self.assertIn("one subagent per image", manifest["instruction"])
 
     def test_all_replaces_every_codex_keyframe_with_liblib(self):
         with tempfile.TemporaryDirectory() as tmp:

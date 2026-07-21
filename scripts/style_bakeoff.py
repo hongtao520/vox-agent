@@ -17,6 +17,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from codex_parallel import execution_contract, instruction as parallel_instruction
 from credentials import require_setup
 from openai_image import OpenAIImageClient
 from provider import get_provider, run_jobs
@@ -61,19 +62,25 @@ def run(project_dir, styles=None, beat_index=0):
         print(f"[{name}] ({tag}) queued")
 
     if image_provider == "codex":
+        items = [
+            {"key": name, "prompt": prompt, "dest": os.path.abspath(dest)}
+            for name, (prompt, dest) in specs.items()
+        ]
         manifest = {
             "model": img_model,
             "aspect": aspect,
-            "instruction": "Use Codex image generation for every item and save the PNG at dest.",
-            "items": [
-                {"key": name, "prompt": prompt, "dest": os.path.abspath(dest)}
-                for name, (prompt, dest) in specs.items()
-            ],
+            "instruction": parallel_instruction(
+                len(items), producer="style_bakeoff.py", edit=False,
+            ),
+            "execution": execution_contract(len(items), edit=False),
+            "items": items,
         }
         manifest_path = os.path.join(out, "gpt-image-2-manifest.json")
         with open(manifest_path, "w") as f:
             json.dump(manifest, f, ensure_ascii=False, indent=2)
         print(f"Codex GPT Image 2 manifest -> {manifest_path}")
+        if items:
+            print(f"Spawn {len(items)} logical image subagents (one per style candidate).")
     elif image_provider == "openai":
         client = OpenAIImageClient(image_config)
         workers = max(1, int(image_config.get("max_concurrency", 2)))

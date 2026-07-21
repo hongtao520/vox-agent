@@ -13,6 +13,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from codex_parallel import execution_contract, instruction as parallel_instruction
 from credentials import require_setup
 from openai_image import OpenAIImageClient, normalize_aspect
 from provider import get_provider, run_jobs
@@ -95,24 +96,27 @@ def run(project_dir):
 
     if image_provider == "codex":
         manifest_path = os.path.join(kf_dir, "gpt-image-2-manifest.json")
+        items = [
+            {"key": key, "prompt": prompt, "dest": os.path.abspath(dest)}
+            for key, (prompt, dest) in jobs.items()
+        ]
         manifest = {
             "model": img_model,
             "aspect": aspect,
-            "instruction": (
-                "Generate items with Codex chat image generation. If any item has a network/service "
-                "failure, stop the Codex batch and run keyframe_fallback.py <project> --all so every "
-                "keyframe uses Liblib. If all succeed, save each PNG at dest and rerun keyframes.py."
+            "instruction": parallel_instruction(
+                len(items), producer="keyframes.py", edit=False,
             ),
-            "items": [
-                {"key": key, "prompt": prompt, "dest": os.path.abspath(dest)}
-                for key, (prompt, dest) in jobs.items()
-            ],
+            "execution": execution_contract(len(items), edit=False),
+            "items": items,
         }
         with open(manifest_path, "w") as f:
             json.dump(manifest, f, ensure_ascii=False, indent=2)
         print(f"Codex GPT Image 2 manifest -> {manifest_path}")
         if jobs:
-            print("Generate every manifest item with Codex image generation, save it at dest, then rerun this command.")
+            print(
+                f"Spawn {len(items)} logical image subagents for {len(items)} manifest items "
+                "(one image per agent), then rerun this command after all succeed."
+            )
     elif image_provider == "openai":
         client = OpenAIImageClient(image_config)
         workers = max(1, int(image_config.get("max_concurrency", 2)))

@@ -34,6 +34,7 @@ import json
 import os
 import sys
 
+from codex_parallel import execution_contract, instruction as parallel_instruction
 from credentials import require_setup
 from openai_image import normalize_aspect
 from runtime import resolve_image_provider
@@ -154,10 +155,15 @@ def run(project_dir):
         json.dump({
             "model": img_model,
             "aspect": aspect,
-            "instruction": "Edit with Codex image generation using reference_images; save each PNG at dest, then rerun croll_keyframes.py.",
+            "instruction": parallel_instruction(
+                len(items), producer="croll_keyframes.py", edit=True,
+            ),
+            "execution": execution_contract(len(items), edit=True),
             "items": items,
         }, f, ensure_ascii=False, indent=2)
     print(f"Codex GPT Image 2 edit manifest -> {manifest_path}")
+    if items:
+        print(f"Spawn {len(items)} logical image-edit subagents (one per keyframe).")
 
     with open(bpath, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)

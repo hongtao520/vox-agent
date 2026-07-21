@@ -2,7 +2,7 @@
 
 用 **Codex GPT Image 2 / Liblib 生图 + Liblib Kling + Fish Audio + 本地 ffmpeg**，把一个主题制作成 VOX 风格的纸张拼贴解说视频。
 
-在 Codex 中，整批关键帧默认使用聊天界面的 GPT Image 2，不需要 OpenAI API Key；如果任意一张出现网络或服务异常，立即停止 Codex 生图，并由 Liblib 重新生成这一项目的**全部关键帧**，保证一条视频不混用两种画风。在非 Codex 环境中，全部图片直接由 Liblib 生成。两种环境的视频阶段都使用 Liblib/Kling；Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
+在 Codex 中，整批关键帧默认使用聊天界面的 GPT Image 2，不需要 OpenAI API Key；manifest 有多少张图片就创建多少个逻辑子代理，每个代理只生成一张并尽可能并行执行。如果任意一张出现网络或服务异常，立即停止未完成的 Codex 生图，并由 Liblib 重新生成这一项目的**全部关键帧**，保证一条视频不混用两种画风。在非 Codex 环境中，全部图片直接由 Liblib 生成。两种环境的视频阶段都使用 Liblib/Kling；Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
 
 ## 视频样例：秦始皇统一货币
 
@@ -110,7 +110,7 @@ python3 scripts/keyframes.py out/qin-currency-15s
 {"image_provider": "auto"}
 ```
 
-- **Codex 环境**：写出 `keyframes/gpt-image-2-manifest.json`，由 Codex 聊天界面的 GPT Image 2 生成整批图片并保存到 manifest 的 `dest`。全部成功后，再次运行相同命令登记路径。
+- **Codex 环境**：写出 `keyframes/gpt-image-2-manifest.json`。系统按 manifest 图片数创建同样数量的逻辑子代理，一名代理负责一张图，并把图片保存到对应 `dest`。主代理不再逐张串行生图。若平台并发槽不足，未启动任务会排队，并在槽位释放后立即继续。全部成功后，再次运行相同命令登记路径。
 - **非 Codex 环境**：不创建 Codex 生图任务，全部关键帧直接通过 Liblib API 生成。
 
 在 Codex 环境中，只要任意一张图片发生网络或服务错误，就停止后续 Codex 生图，不重试失败图片，并执行：
@@ -123,6 +123,10 @@ python3 scripts/keyframe_fallback.py out/qin-currency-15s --all
 
 使用 Skill 时这些步骤由 Codex 自己执行；manifest 是 Codex 与本地脚本之间的任务
 协议，不是要求用户手工复制提示词。
+
+每个 Codex manifest 都包含 `execution.requested_subagents`，其数值严格等于
+`items` 数量，并包含“一代理一图片”的写入范围和失败策略。详细协议见
+[`references/codex-parallel-keyframes.md`](./references/codex-parallel-keyframes.md)。
 
 检查重点：
 
