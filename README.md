@@ -4,6 +4,21 @@
 
 在 Codex 中，整批关键帧默认使用聊天界面的 GPT Image 2，不需要 OpenAI API Key；manifest 有多少张图片就创建多少个逻辑子代理，每个代理只生成一张并尽可能并行执行。如果任意一张出现网络或服务异常，立即停止未完成的 Codex 生图，并由 Liblib 重新生成这一项目的**全部关键帧**，保证一条视频不混用两种画风。在非 Codex 环境中，全部图片直接由 Liblib 生成。两种环境的视频阶段都使用 Liblib/Kling；Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
 
+## 视频样例：郑和下西洋
+
+![郑和下西洋 30 秒 VOX 拼贴视频动态预览](./assets/showcase-zheng-he-preview.gif)
+
+上方为覆盖全部 10 个镜头的 README 内嵌动态预览，自动循环，无需下载。为控制仓库页面加载体积，
+预览采用 2 倍速且不含声音；[打开 30 秒有声完整版](./assets/showcase-zheng-he.mp4)。
+
+- 主题：郑和下西洋
+- 规格：中文、16:9、1920×1080、30 秒、24 fps、10 个镜头
+- 图片：用户提供 10 张中式旧纸拼贴关键帧，本流程没有重新生图
+- 视频生成：Liblib Kling image-to-video
+- 配音：Fish Audio `s2.1-pro-free`，“历史故事·清晰”
+- 配乐：本地 ACE-Step 1.5 中式航海纪录片纯音乐
+- 旁白节奏：0.08 秒进入，持续到 29.26 秒；句间间隔 0.04 秒
+
 ## 视频样例：秦始皇统一货币
 
 [![秦始皇统一货币 15 秒 VOX 拼贴视频](./assets/thumbs/qin-currency.jpg)](./assets/showcase-qin-currency.mp4)
