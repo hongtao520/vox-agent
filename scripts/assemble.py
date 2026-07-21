@@ -65,8 +65,13 @@ def run(project_dir):
     W, H = RES.get(doc.get("aspect", "16:9"), (1920, 1080))
     wm_text = doc.get("watermark", WATERMARK)
     mix = doc.get("mix", {})                      # per-project audio balance (optional)
-    music_vol = float(mix.get("music", 0.6))      # BGM level (was a fixed 0.9 — lowered so VO leads)
+    music_vol = float(mix.get("music", 0.7))      # audible music bed while leaving narration in front
     voice_vol = float(mix.get("voice", 1.25))     # narration boost before the duck + final mix
+    duck_threshold = float(mix.get("duck_threshold", 0.1))
+    duck_ratio = float(mix.get("duck_ratio", 2.0))
+    duck_attack = float(mix.get("duck_attack_ms", 10))
+    duck_release = float(mix.get("duck_release_ms", 180))
+    master_vol = float(mix.get("master", 0.8))
     cap_style = doc.get("caption_style", "white") # white (default, clean) | paper (collage)
     timing = doc.get("narration_timing", {})
     timing_mode = timing.get("mode", "continuous")
@@ -245,13 +250,20 @@ def run(project_dir):
     chain.append(f"[{bgm_idx}:a]atrim=0:{total},volume={music_vol},"
                  f"afade=t=out:st={max(total-2,0):.2f}:d=2,"
                  "aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[bgt]")
-    chain.append("[bgt][narrA]sidechaincompress=threshold=0.02:ratio=12:attack=5:release=350[bgd]")
-    chain.append(f"[narrB][bgd]amix=inputs=2:normalize=0:duration=longest,volume=1.4,atrim=0:{total}[a]")
+    chain.append(
+        f"[bgt][narrA]sidechaincompress=threshold={duck_threshold}:ratio={duck_ratio}:"
+        f"attack={duck_attack}:release={duck_release}[bgd]"
+    )
+    chain.append(
+        f"[narrB][bgd]amix=inputs=2:normalize=0:duration=longest,volume={master_vol},"
+        f"alimiter=limit=0.89:attack=5:release=50:level=false,atrim=0:{total}[a]"
+    )
     filt = ";".join(chain)
 
     final = os.path.join(project_dir, "final.mp4")
     ff([*inputs, "-filter_complex", filt, "-map", "[v]", "-map", "[a]",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", final])
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac",
+        "-movflags", "+faststart", "-shortest", final])
     print("FINAL:", final, f"(~{total}s, {len(segs)} shots)")
 
 

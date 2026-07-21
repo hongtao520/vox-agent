@@ -1,4 +1,4 @@
 interface:
   display_name: "Vox Agent"
-  short_description: "用 Codex/Liblib 批量生图、Kling 与 Fish 制作 VOX 视频"
+  short_description: "用 Codex、Kling、Fish 与本地音乐制作 VOX 视频"
   default_prompt: "Use $vox-agent to turn this topic into a finished Chinese VOX-style collage explainer video."

@@ -7,6 +7,7 @@ service. Fish Audio is the optional TTS provider; local narration remains valid.
 import json, os, re, subprocess, sys, wave
 from credentials import require_setup
 from fish_audio import generate_project
+from music import generate as generate_music
 
 EDGE_TRIM = (
     "silenceremove=start_periods=1:start_duration=0.05:start_threshold=-42dB:"
@@ -81,12 +82,19 @@ def run(project_dir):
                 target = os.path.join(trim_dir, os.path.basename(source))
                 trim_edges(source, target)
                 beat["narration_audio"] = os.path.abspath(target)
+        # Persist trimmed narration paths before music generation reloads beats.json.
+        with open(bpath, "w") as target:
+            json.dump(doc, target, ensure_ascii=False, indent=2)
+    bgm = doc.get("bgm_path")
+    if not bgm or not os.path.isfile(bgm):
+        generate_music(project_dir)
+        with open(bpath) as f: doc = json.load(f)
+        bgm = doc.get("bgm_path")
     missing = []
     for beat in doc["beats"]:
         path = beat.get("narration_audio")
         if not path or not os.path.isfile(path): missing.append(f"beat {beat['id']}: narration_audio")
         else: beat["narration_dur"] = round(probe_dur(path), 2)
-    bgm = doc.get("bgm_path")
     if not bgm or not os.path.isfile(bgm): missing.append("bgm_path")
     else: doc["bgm_dur"] = round(probe_dur(bgm), 2)
     if missing:

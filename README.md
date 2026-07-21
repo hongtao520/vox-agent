@@ -37,6 +37,23 @@ cd ~/.codex/skills/vox-agent
 - `ffmpeg` 与 `ffprobe`
 - Pillow：`python3 -m pip install Pillow`
 
+### 免费的本地背景音乐（可选安装）
+
+Vox Agent 默认用本地 ACE-Step 1.5 生成背景音乐，不需要音乐 API Key。首次使用需下载
+模型；Apple Silicon 使用 MPS。安装并启动官方本地服务：
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+git clone https://github.com/ACE-Step/ACE-Step-1.5.git ~/ACE-Step-1.5
+cd ~/ACE-Step-1.5
+uv sync
+uv run acestep-api
+```
+
+保持这个终端窗口运行。默认地址为 `http://127.0.0.1:8001`。模型第一次启动会下载，
+因此首次耗时明显长于后续任务。ACE-Step 项目与代码采用 MIT License；生成内容仍应
+避免模仿具体在世音乐人，并在发布前自行检查原创性和平台规则。
+
 ## 2. 首次使用：提供三个密钥
 
 第一次运行生成流程前，Vox Agent 会检查以下三个密钥；缺少任何一个都会暂停并显示获取地址：
@@ -80,7 +97,22 @@ mkdir -p out/qin-currency-15s/audio
 cp examples/qin-currency-15s.beats.json out/qin-currency-15s/beats.json
 ```
 
-准备一条至少 15 秒的本地背景音乐，并把 `beats.json` 的 `bgm_path` 改为它的绝对路径。音乐应低存在感、无歌词，避免压住旁白。
+不提供 `bgm_path` 时，`audio.py` 会调用本地 ACE-Step 生成纯音乐。建议在
+`beats.json` 提供主题化提示词：
+
+```json
+{
+  "music": {
+    "provider": "ace-step",
+    "api_url": "http://127.0.0.1:8001",
+    "model": "acestep-v15-turbo",
+    "duration_s": 17,
+    "prompt": "秦统一六国的历史纪录片配乐，古琴、箫、低沉战鼓和编钟，前段紧张割据，中段逐步推进，统一时克制而有力量；纯音乐，无人声，不与中文旁白争抢中频，结尾干净。"
+  }
+}
+```
+
+也可以继续设置一条已有授权音乐的绝对 `bgm_path`；只要文件有效，本地生成会自动跳过。
 
 这个 15 秒样例采用三句话、三个镜头：
 
@@ -149,11 +181,14 @@ Liblib Kling 会把每张拼贴海报制作成“活的海报”。`camera_move`
 - 相邻镜头运镜没有机械重复
 - 临时生成 URL 已及时下载到本地
 
-## 6. 生成 Fish 中文旁白
+## 6. 生成免费背景音乐和 Fish 中文旁白
 
 ```bash
 python3 scripts/audio.py out/qin-currency-15s
 ```
+
+这个命令会生成/检查旁白，并在缺少有效 `bgm_path` 时补齐 `audio/bgm.wav`。ACE-Step 服务未启动时会
+直接给出安装和启动命令，不会切换到任何付费音乐接口。
 
 样例配置：
 
