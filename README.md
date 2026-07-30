@@ -2,22 +2,9 @@
 
 用 **Codex GPT Image 2 / Liblib 生图 + Liblib Kling + Fish Audio + 本地 ffmpeg**，把一个主题制作成 VOX 风格的纸张拼贴解说视频。
 
+仓库内置生图路由、图生视频、Fish Audio 和本地装配脚本，不依赖其他 Skill。
+
 在 Codex 中，整批关键帧默认使用聊天界面的 GPT Image 2，不需要 OpenAI API Key；manifest 有多少张图片就创建多少个逻辑子代理，每个代理只生成一张并尽可能并行执行。如果任意一张出现网络或服务异常，立即停止未完成的 Codex 生图，并由 Liblib 重新生成这一项目的**全部关键帧**，保证一条视频不混用两种画风。在非 Codex 环境中，全部图片直接由 Liblib 生成。两种环境的视频阶段都使用 Liblib/Kling；Fish Audio `s2.1-pro-free` 负责中文旁白，本地流程负责连续语音、字幕、音乐混音和最终装配。
-
-## 视频样例：郑和下西洋
-
-![郑和下西洋 30 秒 VOX 拼贴视频动态预览](./assets/showcase-zheng-he-preview.gif)
-
-上方为覆盖全部 10 个镜头的 README 内嵌动态预览，自动循环，无需下载。为控制仓库页面加载体积，
-预览采用 2 倍速且不含声音；[打开 30 秒有声完整版](./assets/showcase-zheng-he.mp4)。
-
-- 主题：郑和下西洋
-- 规格：中文、16:9、1920×1080、30 秒、24 fps、10 个镜头
-- 图片：用户提供 10 张中式旧纸拼贴关键帧，本流程没有重新生图
-- 视频生成：Liblib Kling image-to-video
-- 配音：Fish Audio `s2.1-pro-free`，“历史故事·清晰”
-- 配乐：本地 ACE-Step 1.5 中式航海纪录片纯音乐
-- 旁白节奏：0.08 秒进入，持续到 29.26 秒；句间间隔 0.04 秒
 
 ## 视频样例：秦始皇统一货币
 
@@ -51,23 +38,6 @@ cd ~/.codex/skills/vox-agent
 - Python 3.9+
 - `ffmpeg` 与 `ffprobe`
 - Pillow：`python3 -m pip install Pillow`
-
-### 免费的本地背景音乐（可选安装）
-
-Vox Agent 默认用本地 ACE-Step 1.5 生成背景音乐，不需要音乐 API Key。首次使用需下载
-模型；Apple Silicon 使用 MPS。安装并启动官方本地服务：
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-git clone https://github.com/ACE-Step/ACE-Step-1.5.git ~/ACE-Step-1.5
-cd ~/ACE-Step-1.5
-uv sync
-uv run acestep-api
-```
-
-保持这个终端窗口运行。默认地址为 `http://127.0.0.1:8001`。模型第一次启动会下载，
-因此首次耗时明显长于后续任务。ACE-Step 项目与代码采用 MIT License；生成内容仍应
-避免模仿具体在世音乐人，并在发布前自行检查原创性和平台规则。
 
 ## 2. 首次使用：提供三个密钥
 
@@ -112,22 +82,7 @@ mkdir -p out/qin-currency-15s/audio
 cp examples/qin-currency-15s.beats.json out/qin-currency-15s/beats.json
 ```
 
-不提供 `bgm_path` 时，`audio.py` 会调用本地 ACE-Step 生成纯音乐。建议在
-`beats.json` 提供主题化提示词：
-
-```json
-{
-  "music": {
-    "provider": "ace-step",
-    "api_url": "http://127.0.0.1:8001",
-    "model": "acestep-v15-turbo",
-    "duration_s": 17,
-    "prompt": "秦统一六国的历史纪录片配乐，古琴、箫、低沉战鼓和编钟，前段紧张割据，中段逐步推进，统一时克制而有力量；纯音乐，无人声，不与中文旁白争抢中频，结尾干净。"
-  }
-}
-```
-
-也可以继续设置一条已有授权音乐的绝对 `bgm_path`；只要文件有效，本地生成会自动跳过。
+准备一条至少 15 秒的本地背景音乐，并把 `beats.json` 的 `bgm_path` 改为它的绝对路径。音乐应低存在感、无歌词，避免压住旁白。
 
 这个 15 秒样例采用三句话、三个镜头：
 
@@ -196,14 +151,11 @@ Liblib Kling 会把每张拼贴海报制作成“活的海报”。`camera_move`
 - 相邻镜头运镜没有机械重复
 - 临时生成 URL 已及时下载到本地
 
-## 6. 生成免费背景音乐和 Fish 中文旁白
+## 6. 生成 Fish 中文旁白
 
 ```bash
 python3 scripts/audio.py out/qin-currency-15s
 ```
-
-这个命令会生成/检查旁白，并在缺少有效 `bgm_path` 时补齐 `audio/bgm.wav`。ACE-Step 服务未启动时会
-直接给出安装和启动命令，不会切换到任何付费音乐接口。
 
 样例配置：
 
