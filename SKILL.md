@@ -2,7 +2,8 @@
 name: vox-agent
 description: >
   Turn one topic into a finished Vox-style paper-collage explainer or ad: script, collage
-  keyframes, motion, Fish Audio narration, captions, and local ffmpeg assembly. In Codex, GPT Image 2
+  keyframes, motion, Fish Audio narration, free local ACE-Step background music, captions, and
+  local ffmpeg assembly. In Codex, GPT Image 2
   assigns one parallel subagent to every keyframe; one network/service failure switches the whole batch to Liblib.
   Outside Codex, Liblib creates all images. Liblib/Kling owns image-to-video and Fish owns voice. Use whenever the user wants a Vox
   video, torn-paper collage animation, motion collage, narrated collage explainer, scrapbook
@@ -134,12 +135,18 @@ This is the default, most-automated path. Every stage is one script, all driven 
    rate-limit/concurrency backoff.
 
 5. **Voice + music.** `python3 scripts/audio.py out/<project>`
-   Liblib's documented visual workflow API does not supply TTS or BGM. For narration, either
+   Liblib's documented visual workflow API does not supply TTS or BGM. Background music defaults
+   to the free local **ACE-Step 1.5** server: if `bgm_path` is absent or invalid, `audio.py`
+   calls `scripts/music.py`, generates a narration-friendly instrumental to `audio/bgm.wav`, and
+   writes its absolute path back to `beats.json`. Install/start ACE-Step once with the commands in
+   README; it needs no cloud music key. To reuse owned/licensed music instead, set a valid local
+   `bgm_path` and the generator is skipped. For narration, either
    set one local `narration_audio` file per beat, or configure `voice.provider: "fish"` with a
    Fish library/clone `reference_id`. Fish credentials come only from `FISH_API_KEY`. If no voice
    block and no complete local narration are provided, default to Fish `s2.1-pro-free`, voice
    “历史故事·清晰”, `reference_id: 6fc59d2b56cf402eb572934114c8d8aa`.
-   Set a local `bgm_path` either way.
+   Use a detailed `music.prompt` for deliberate era/instrument/emotional control; otherwise the
+   local prompt is derived from the topic and beat feelings.
 
 The provider contract is intentionally split: one project uses one keyframe provider (Codex or
 Liblib), Liblib/Kling owns image-to-video, and Fish Audio owns narration.
@@ -283,8 +290,24 @@ or a collage ad built around a real product shot (validated on both, 2026-07-17)
   "video_resolution": "720p",             // 720p (default); Seedance also 480p/1080p (Omni is 720p-only)
   "motion_style": "punchy",               // amplitude: calm | punchy | max (theme sets a default)
   "constraints": "strict",                // strict = defect guards on | loose = let AI explore + re-roll
-  "bgm_path": "/absolute/path/to/bgm.mp3", // Liblib does not provide TTS/BGM; provide local audio
-  "mix": {"music": 0.6, "voice": 1.25},   // audio balance — optional; these are the defaults (BGM ducks under the VO)
+  "music": {                              // optional; used when bgm_path is missing/invalid
+    "provider": "ace-step",              // free local ACE-Step 1.5 server
+    "api_url": "http://127.0.0.1:8001",
+    "model": "acestep-v15-turbo",
+    "duration_s": 17,
+    "prompt": "Instrumental historical documentary underscore...",
+    "inference_steps": 8
+  },
+  "bgm_path": "/absolute/path/to/bgm.mp3", // optional override: reuse owned/licensed local audio
+  "mix": {                              // optional audio balance; defaults shown
+    "music": 0.7,
+    "voice": 1.25,
+    "duck_threshold": 0.1,
+    "duck_ratio": 2.0,
+    "duck_attack_ms": 10,
+    "duck_release_ms": 180,
+    "master": 0.8
+  },                                    // audible BGM with gentle narration ducking
   "voice": {                             // optional TTS; omit to use beat narration_audio files
     "provider": "fish",
     "model": "s2.1-pro-free",
@@ -338,7 +361,8 @@ The defaults split still-image and motion generation:
 |---|---|---|
 | Keyframe / collage poster | Codex GPT Image 2 or Liblib | Codex uses one parallel subagent per image; any service failure reroutes the whole batch to Liblib. Non-Codex uses Liblib from the start. |
 | Animate | Kling image-to-video | `/api/generate/video/kling/img2video` |
-| Narration / music | local files | set `narration_audio` per beat and `bgm_path`; not a Liblib workflow API feature |
+| Narration | Fish or local files | Fish `s2.1-pro-free`, or set `narration_audio` per beat |
+| Background music | ACE-Step 1.5 or local file | free local generation; a valid `bgm_path` bypasses it |
 
 In Codex, use Liblib fallback through `scripts/keyframe_fallback.py --all` after any Codex
 batch network/service failure. Outside Codex, `keyframes.py` uses Liblib directly. `scripts/provider.py` handles Liblib image generation, video submission and local keyframe upload;
